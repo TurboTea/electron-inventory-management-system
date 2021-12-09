@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="products"
+    :items="stocks"
     sort-by="calories"
     class="elevation-1"
   >
@@ -9,7 +9,7 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Produits</v-toolbar-title>
+        <v-toolbar-title>Stock</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -172,7 +172,7 @@
         { text: 'Created', value: 'created' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      products: [],
+      stocks: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -211,25 +211,26 @@
 
     methods: {
       initialize () {
-        ipcRenderer.send('products:load'),
-        ipcRenderer.on('products:get', (e, products) => {
-          this.products = JSON.parse(products)
+        ipcRenderer.send('stocks:load'),
+        ipcRenderer.on('stocks:get', (e, stocks) => {
+          this.stocks = JSON.parse(stocks)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.products.indexOf(item)
+        this.editedIndex = this.stocks.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = item._id
+        this.editedIndex = this.stocks.indexOf(item)
+        this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        ipcRenderer.send('products:delete', this.editedIndex)
+        this.stocks.splice(this.editedIndex, 1)
         this.closeDelete()
       },
 
@@ -250,19 +251,22 @@
       },
 
       save () {
-        if (this.editedIndex > -1) {
-          ipcRenderer.send('products:edit', this.editedItem)
-        } else {
-          let item = {
+        let item = {
           name: this.editedItem.name,
           designation: this.editedItem.designation,
           code: this.editedItem.code,
           price: this.editedItem.price,
           amount: this.editedItem.amount,
         }
-        ipcRenderer.send('products:add', item)
-        }
+        //console.log('item',item)
+        ipcRenderer.send('stocks:add', item),
         this.close()
+        /*if (this.editedIndex > -1) {
+          Object.assign(this.stocks[this.editedIndex], this.editedItem)
+        } else {
+          this.stocks.push(this.editedItem)
+        }
+        this.close()*/
       },
     },
   }

@@ -10,6 +10,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
+  "author": "Next Challenge <contact@nextchallenge-dz.com>",
   "main": "background.js",
   "dependencies": {
     "@mdi/font": "5.9.55",

@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Product from '../views/Product.vue'
 import Provider from '../views/Provider.vue'
 import Customer from '../views/Customer.vue'
+import Stock from '../views/Stock.vue'
 
 Vue.use(VueRouter)
 
@@ -35,6 +36,11 @@ const routes = [
     path: '/customer',
     name: 'Customer',
     component: Customer
+  },
+  {
+    path: '/stock',
+    name: 'Stock',
+    component: Stock
   },
 
 ]

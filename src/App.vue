@@ -61,6 +61,7 @@
           { title: 'Products', icon: 'mdi-help-box', to: '/product' },
           { title: 'Customers', icon: 'mdi-card-account-details-outline', to: '/customer' },
           { title: 'Providers', icon: 'mdi-card-account-details', to: '/provider' },
+          { title: 'Stock', icon: 'mdi-warehouse', to: '/stock' },
           { title: 'About', icon: 'mdi-information-outline', to: '/about' }
         ],
         right: null,

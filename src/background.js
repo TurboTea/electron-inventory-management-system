@@ -8,6 +8,7 @@ const connectDB = require('./config/db')
 const Product = require('./models/Product')
 const Provider = require('./models/Provider')
 const Customer = require('./models/Customer')
+const Stock = require('./models/Stock')
 
 
 // Connect to database
@@ -65,6 +66,42 @@ async function createWindow() {
     }
   })
 
+  // Delete product
+  ipcMain.on('products:delete', async (e, id) => {
+    try {
+      await Product.findOneAndDelete({ _id: id })
+      sendProducts()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit product
+  ipcMain.on('products:edit', async (e, item) => {
+    try {
+      const doc = await Product.findById(item._id);
+      doc.name = item.name;
+      doc.designation = item.designation;
+      doc.code = item.code;
+      doc.price = item.price;
+      doc.amount = item.amount;
+      await doc.save();
+      sendProducts()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete product
+  ipcMain.on('products:delete', async (e, id) => {
+    try {
+      await Product.findOneAndDelete({ _id: id })
+      sendProducts()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
   // Load prviders
   ipcMain.on('providers:load', sendProviders)
 
@@ -106,6 +143,29 @@ async function createWindow() {
     try {
       await Customer.create(item)
       sendCustomers()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Load stock
+  ipcMain.on('stocks:load', sendProviders)
+
+  // Send stock items
+  async function sendStocks() {
+    try {
+      const stocks = await Stock.find().sort({ created: 1 })
+      win.webContents.send('stocks:get', JSON.stringify(stocks))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Add stocks
+  ipcMain.on('stocks:add', async (e, item) => {
+    try {
+      await Stock.create(item)
+      sendStocks()
     } catch (error) {
       console.log(error)
     }
