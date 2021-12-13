@@ -5,6 +5,10 @@ import Product from '../views/Product.vue'
 import Provider from '../views/Provider.vue'
 import Customer from '../views/Customer.vue'
 import Stock from '../views/Stock.vue'
+import Dashboard from '../views/Dashboard.vue'
+import Setting from '../views/Setting.vue'
+import Sale from '../views/Sale.vue'
+import Purchase from '../views/Purchase.vue'
 
 Vue.use(VueRouter)
 
@@ -41,6 +45,26 @@ const routes = [
     path: '/stock',
     name: 'Stock',
     component: Stock
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard
+  },
+  {
+    path: '/setting',
+    name: 'Setting',
+    component: Setting
+  },
+  {
+    path: '/sale',
+    name: 'Sale',
+    component: Sale
+  },
+  {
+    path: '/purchase',
+    name: 'Purchase',
+    component: Purchase
   },
 
 ]

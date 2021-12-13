@@ -29,7 +29,7 @@
           link
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon color="next">{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -40,13 +40,38 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon 
+        color="next"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
 
       <v-toolbar-title>Application</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+          <v-btn 
+            icon
+            color="next">
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
+          <v-btn 
+            icon
+            color="next">
+            <v-icon>mdi-email</v-icon>
+          </v-btn>
+          <v-btn 
+            icon
+            color="next">
+            <v-icon>mdi-bell</v-icon>
+          </v-btn>
+          <v-btn 
+            icon
+            color="next">
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
     </v-app-bar>
 
     <v-main>
-      <router-view></router-view>
+      <router-view ></router-view>
     </v-main>
   </v-app>
 </template>
@@ -57,12 +82,18 @@
       
       drawer: null,
       items: [
-          { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/' },
-          { title: 'Products', icon: 'mdi-help-box', to: '/product' },
-          { title: 'Customers', icon: 'mdi-card-account-details-outline', to: '/customer' },
-          { title: 'Providers', icon: 'mdi-card-account-details', to: '/provider' },
+          { title: 'Accueil', icon: 'mdi-home', to: '/' },
+          { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
+          { title: 'Products', icon: 'mdi-basket', to: '/product' },
+          { title: 'Sales', icon: 'mdi-cash-register', to: '/sale' },
+          { title: 'Purchase', icon: 'mdi-cart-variant', to: '/purchase' },
+          { title: 'Customers', icon: 'mdi-account-group-outline', to: '/customer' },
+          { title: 'Providers', icon: 'mdi-account-group', to: '/provider' },
+          { title: 'Invoice', icon: 'mdi-receipt', to: '/provider' },
+          { title: 'Statistics', icon: 'mdi-finance', to: '/provider' },
           { title: 'Stock', icon: 'mdi-warehouse', to: '/stock' },
-          { title: 'About', icon: 'mdi-information-outline', to: '/about' }
+          { title: 'Setting', icon: 'mdi-cog', to: '/setting' },
+          { title: 'About', icon: 'mdi-information', to: '/about' }
         ],
         right: null,
       }),

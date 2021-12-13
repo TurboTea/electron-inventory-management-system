@@ -1,8 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="products"
-    :search="search"
+    :items="sales"
     sort-by="name"
     class="elevation-1"
   >
@@ -10,20 +9,12 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Produits</v-toolbar-title>
+        <v-toolbar-title>Sales</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
           vertical
         ></v-divider>
-        <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-            class="shrink mx-4"
-        ></v-text-field>
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
@@ -167,7 +158,6 @@
 
   export default {
     data: () => ({
-      search: '',
       dialog: false,
       dialogDelete: false,
       headers: [
@@ -184,7 +174,7 @@
         { text: 'Created', value: 'created' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      products: [],
+      sales: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -223,14 +213,14 @@
 
     methods: {
       initialize () {
-        ipcRenderer.send('products:load'),
-        ipcRenderer.on('products:get', (e, products) => {
-          this.products = JSON.parse(products)
+        ipcRenderer.send('sales:load'),
+        ipcRenderer.on('sales:get', (e, sales) => {
+          this.sales = JSON.parse(sales)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.products.indexOf(item)
+        this.editedIndex = this.sales.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
@@ -241,7 +231,7 @@
       },
 
       deleteItemConfirm () {
-        ipcRenderer.send('products:delete', this.editedIndex)
+        ipcRenderer.send('sales:delete', this.editedIndex)
         this.closeDelete()
       },
 
@@ -263,7 +253,7 @@
 
       save () {
         if (this.editedIndex > -1) {
-          ipcRenderer.send('products:edit', this.editedItem)
+          ipcRenderer.send('sales:edit', this.editedItem)
         } else {
           let item = {
           name: this.editedItem.name,
@@ -272,7 +262,7 @@
           price: this.editedItem.price,
           amount: this.editedItem.amount,
         }
-        ipcRenderer.send('products:add', item)
+        ipcRenderer.send('sales:add', item)
         }
         this.close()
       },

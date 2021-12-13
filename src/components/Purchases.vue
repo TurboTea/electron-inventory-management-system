@@ -1,8 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="products"
-    :search="search"
+    :items="purchases"
     sort-by="name"
     class="elevation-1"
   >
@@ -10,13 +9,13 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Produits</v-toolbar-title>
+        <v-toolbar-title>Purchases</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
           vertical
         ></v-divider>
-        <v-text-field
+         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
             label="Search"
@@ -24,6 +23,40 @@
             hide-details
             class="shrink mx-4"
         ></v-text-field>
+        <v-divider
+          class="mx-4"
+          inset
+          vertical
+        ></v-divider>
+        <v-col
+        cols="12"
+        sm="6"
+        md="4"
+        >
+            <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+            >
+                <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                    v-model="date"
+                    label="Picker without buttons"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                ></v-text-field>
+                </template>
+                <v-date-picker
+                    v-model="date"
+                    @input="menu2 = false"
+                    ></v-date-picker>
+                </v-menu>
+        </v-col>
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
@@ -167,6 +200,10 @@
 
   export default {
     data: () => ({
+      date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      menu: false,
+      modal: false,
+      menu2: false,
       search: '',
       dialog: false,
       dialogDelete: false,
@@ -184,7 +221,7 @@
         { text: 'Created', value: 'created' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      products: [],
+      purchases: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -223,14 +260,14 @@
 
     methods: {
       initialize () {
-        ipcRenderer.send('products:load'),
-        ipcRenderer.on('products:get', (e, products) => {
-          this.products = JSON.parse(products)
+        ipcRenderer.send('purchases:load'),
+        ipcRenderer.on('purchases:get', (e, purchases) => {
+          this.purchases = JSON.parse(purchases)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.products.indexOf(item)
+        this.editedIndex = this.purchases.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
@@ -241,7 +278,7 @@
       },
 
       deleteItemConfirm () {
-        ipcRenderer.send('products:delete', this.editedIndex)
+        ipcRenderer.send('purchases:delete', this.editedIndex)
         this.closeDelete()
       },
 
@@ -263,7 +300,7 @@
 
       save () {
         if (this.editedIndex > -1) {
-          ipcRenderer.send('products:edit', this.editedItem)
+          ipcRenderer.send('purchases:edit', this.editedItem)
         } else {
           let item = {
           name: this.editedItem.name,
@@ -272,7 +309,7 @@
           price: this.editedItem.price,
           amount: this.editedItem.amount,
         }
-        ipcRenderer.send('products:add', item)
+        ipcRenderer.send('purchases:add', item)
         }
         this.close()
       },
