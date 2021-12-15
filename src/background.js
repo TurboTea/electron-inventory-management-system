@@ -9,6 +9,9 @@ const Product = require('./models/Product')
 const Provider = require('./models/Provider')
 const Customer = require('./models/Customer')
 const Stock = require('./models/Stock')
+const ProductPurchase = require('./models/ProductPurchase')
+const ProductSale = require('./models/ProductSale')
+const Sale = require('./models/Sale')
 
 
 // Connect to database
@@ -93,14 +96,14 @@ async function createWindow() {
   })
 
   // Delete product
-  ipcMain.on('products:delete', async (e, id) => {
-    try {
-      await Product.findOneAndDelete({ _id: id })
-      sendProducts()
-    } catch (error) {
-      console.log(error)
-    }
-  })
+  // ipcMain.on('products:delete', async (e, id) => {
+  //   try {
+  //     await Product.findOneAndDelete({ _id: id })
+  //     sendProducts()
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // })
 
   // Load prviders
   ipcMain.on('providers:load', sendProviders)
@@ -149,7 +152,7 @@ async function createWindow() {
   })
 
   // Load stock
-  ipcMain.on('stocks:load', sendProviders)
+  ipcMain.on('stocks:load', sendStocks)
 
   // Send stock items
   async function sendStocks() {
@@ -166,6 +169,104 @@ async function createWindow() {
     try {
       await Stock.create(item)
       sendStocks()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Load ProductSale
+  ipcMain.on('productSales:load', sendProductSales)
+
+  // Send productSale
+  async function sendProductSales(id) {
+    try {
+      const productSales = await ProductSale.find({ saleId: id })
+      win.webContents.send('productSales:get', JSON.stringify(productSales))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Add ProductSale
+  ipcMain.on('productSales:add', async (e, item) => {
+    try {
+      await ProductSale.create(item)
+      sendProductSales()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete ProductSale
+  ipcMain.on('productSales:delete', async (e, id) => {
+    try {
+      await ProductSale.findOneAndDelete({ _id: id })
+      sendProductSales()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit ProductSale
+  ipcMain.on('productSales:edit', async (e, item) => {
+    try {
+      const doc = await ProductSale.findById(item._id);
+      doc.name = item.name;
+      doc.designation = item.designation;
+      doc.code = item.code;
+      doc.price = item.price;
+      doc.amount = item.amount;
+      await doc.save();
+      sendProductSales()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Load Sales
+  ipcMain.on('sales:load', sendSales)
+
+  // Send Sales
+  async function sendSales() {
+    try {
+      const sales = await Sale.find().sort({ created: 1 }).populate("customerId")
+      win.webContents.send('sales:get', JSON.stringify(sales))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Add Sales
+  ipcMain.on('sales:add', async (e, item) => {
+    try {
+      await Sale.create(item)
+      sendSales()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete Sale
+  ipcMain.on('sales:delete', async (e, id) => {
+    try {
+      await Sale.findOneAndDelete({ _id: id })
+      sendSales()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit Sale
+  ipcMain.on('sales:edit', async (e, item) => {
+    try {
+      const doc = await Sale.findById(item._id);
+      doc.name = item.name;
+      doc.designation = item.designation;
+      doc.code = item.code;
+      doc.price = item.price;
+      doc.amount = item.amount;
+      await doc.save();
+      sendSales()
     } catch (error) {
       console.log(error)
     }

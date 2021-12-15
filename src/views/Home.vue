@@ -10,6 +10,7 @@
           hover
           class="card"
           :to="item.to"
+          :disabled="item.title === 'Accueil'"
         >
           <v-img
             contain

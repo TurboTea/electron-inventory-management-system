@@ -7,7 +7,8 @@ import Customer from '../views/Customer.vue'
 import Stock from '../views/Stock.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Setting from '../views/Setting.vue'
-import Sale from '../views/Sale.vue'
+//import Sales from '../views/Sale/index.vue'
+//import Sale from '../views/Sale/show.vue'
 import Purchase from '../views/Purchase.vue'
 
 Vue.use(VueRouter)
@@ -57,9 +58,14 @@ const routes = [
     component: Setting
   },
   {
-    path: '/sale',
+    path: '/sales',
+    name: 'Sales',
+    component: () => import('../views/Sale/index.vue')
+  },
+  {
+    path: '/sale/:id',
     name: 'Sale',
-    component: Sale
+    component: () => import('../views/Sale/show.vue')
   },
   {
     path: '/purchase',

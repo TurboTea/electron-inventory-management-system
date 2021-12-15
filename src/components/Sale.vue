@@ -1,38 +1,23 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="purchases"
-    sort-by="name"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar
-        flat
-      >
-        <v-toolbar-title>Purchases</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-row>
-      <v-col
-        cols="4"
-        lg="4"
-      >
-         <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-            class="shrink mx-4"
-        ></v-text-field>
-      </v-col>
+<v-container fluid>
+  <v-expansion-panels popout>
+        <v-expansion-panel
+          hide-actions
+        >
+          <v-expansion-panel-header>
+               
+                <h2>Filter</h2>
+              
+          </v-expansion-panel-header>
+            
+
+          <v-expansion-panel-content>
+            <v-divider></v-divider>
+            <v-row justify="center">
+      
 
        <v-col
         cols="4"
-        lg="4"
       >
         <v-menu
           v-model="start_date"
@@ -41,13 +26,15 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              :value="computedDateFormattedMomentjs"
+              :value="computedDateFormattedStartDate"
+              append-icon="mdi-calendar"
               clearable
-              label="Formatted with Moment.js"
+              label="Date Début"
               readonly
+              single-line
               v-bind="attrs"
               v-on="on"
-              @click:clear="date = null"
+              @click:clear="date_start = null"
             ></v-text-field>
           </template>
           <v-date-picker
@@ -59,7 +46,7 @@
 
       <v-col
         cols="4"
-        lg="4"
+        
       >
         <v-menu
           v-model="end_date"
@@ -68,13 +55,15 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              :value="computedDateFormattedDatefns"
+              :value="computedDateFormattedEndDate"
+              append-icon="mdi-calendar"
               clearable
-              label="Formatted with datefns"
+              label="Date Fin"
               readonly
+              single-line
               v-bind="attrs"
               v-on="on"
-              @click:clear="date = null"
+              @click:clear="date_end = null"
             ></v-text-field>
           </template>
           <v-date-picker
@@ -84,6 +73,39 @@
         </v-menu>
       </v-col>
     </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+ 
+  
+  <v-data-table
+    :headers="headers"
+    :items="productSales"
+    :search="search"
+    sort-by="code"
+    class="elevation-4 mt-4"
+  >
+    <template v-slot:item.date="{ item }">
+      {{ formatDate(item.date) }}
+    </template>
+    <template v-slot:top>
+      <v-toolbar
+        flat
+      >
+        <v-toolbar-title>{{ id }}</v-toolbar-title>
+        <v-divider
+          class="mx-4"
+          inset
+          vertical
+        ></v-divider>
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+            class="shrink mx-4"
+        ></v-text-field>
 
         <v-spacer></v-spacer>
         <v-dialog
@@ -110,56 +132,24 @@
             <v-card-text>
               <v-container>
                 <v-row>
+                  
+                  
+              
                   <v-col
                     cols="12"
                     sm="6"
                     md="4"
                   >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Name"
-                    ></v-text-field>
+                    <v-select
+                      :items="customers"
+                      label="Customers"
+                      item-value="_id"
+                      item-text="raison"
+                      v-model="editedItem.customer"
+                     
+                    ></v-select>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.designation"
-                      label="Description"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.code"
-                      label="Code"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.price"
-                      label="Price"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.amount"
-                      label="Amount"
-                    ></v-text-field>
-                  </v-col>
+                  
                 </v-row>
               </v-container>
             </v-card-text>
@@ -201,6 +191,14 @@
         small
         class="mr-2"
         color="next"
+        :to="'/Sale/'+ item._id"
+      >
+        mdi-eye
+      </v-icon>
+      <v-icon
+        small
+        class="mr-2"
+        color="next"
         @click="editItem(item)"
       >
         mdi-pencil
@@ -223,19 +221,20 @@
       </v-btn>
     </template>
   </v-data-table>
+  </v-container>
 </template>
 
 <script>
   import {ipcRenderer} from "electron";
   import moment from 'moment'
-  import { format, parseISO } from 'date-fns'
+  
 
 
   export default {
     data: () => ({
-      // https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#string-arguments
-      date_start: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
-      date_end: format(parseISO(new Date().toISOString()), 'yyyy-MM-dd'),
+      id: '',
+      date_start: '',
+      date_end: '',
       start_date: false,
       end_date: false,
       search: '',
@@ -243,42 +242,37 @@
       dialogDelete: false,
       headers: [
         {
-          text: 'Name',
+          text: 'Code',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'code',
         },
-        { text: 'Description', value: 'designation' },
-        { text: 'Code', value: 'code' },
-        { text: 'Price', value: 'price' },
-        { text: 'amount', value: 'amount' },
-        { text: 'Created', value: 'created' },
+        { text: 'Date', value: "date" },
+        { text: 'Customer', value: "customerId.raison" },
+        { text: 'Total', value: 'total_price' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      purchases: [],
+      productSales: [],
+      customers: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        designation: '',
         code: '',
-        price: '',
-        amount: ''
+        customer: '',
+        total_price: ''
       },
       defaultItem: {
-        name: '',
-        designation: '',
         code: '',
-        price: '',
-        amount: ''
+        customer: '',
+        total_price: ''
       },
     }),
 
     computed: {
-      computedDateFormattedMomentjs () {
+      computedDateFormattedStartDate () {
         return this.date_start ? moment(this.date_start).format('dddd, MMMM Do YYYY') : ''
       },
-      computedDateFormattedDatefns () {
-        return this.date_end ? format(parseISO(this.date_end), 'EEEE, MMMM do yyyy') : ''
+      computedDateFormattedEndDate () {
+        return this.date_end ? moment(this.date_end).format('dddd, MMMM Do YYYY') : ''
       },
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
@@ -295,19 +289,26 @@
     },
 
     created() {
-      this.initialize()
+      this.initialize(),
+      this.getRouteId()
     },
 
     methods: {
+      getRouteId() {
+          this.id = this.$route.params.id
+      },
+      formatDate(value) {
+        return moment(value).format("MMMM DD YYYY, h:mm:ss a")
+      },
       initialize () {
-        ipcRenderer.send('purchases:load'),
-        ipcRenderer.on('purchases:get', (e, purchases) => {
-          this.purchases = JSON.parse(purchases)
+        ipcRenderer.send('productSales:load'),
+        ipcRenderer.on('productSales:get', (e, productSales) => {
+          this.productSales = JSON.parse(productSales)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.purchases.indexOf(item)
+        this.editedIndex = this.productSales.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
@@ -318,7 +319,7 @@
       },
 
       deleteItemConfirm () {
-        ipcRenderer.send('purchases:delete', this.editedIndex)
+        ipcRenderer.send('productSales:delete', this.editedIndex)
         this.closeDelete()
       },
 
@@ -340,19 +341,23 @@
 
       save () {
         if (this.editedIndex > -1) {
-          ipcRenderer.send('purchases:edit', this.editedItem)
+          ipcRenderer.send('productSales:edit', this.editedItem)
         } else {
+          var str = String(this.productSales.length++);
+          while (str.length < 5) str = "0" + str;
+          
           let item = {
-          name: this.editedItem.name,
-          designation: this.editedItem.designation,
-          code: this.editedItem.code,
-          price: this.editedItem.price,
-          amount: this.editedItem.amount,
+          code: "S" + str,
+          customerId: this.editedItem.customer,
+          total_price: this.editedItem.total_price,
+          
         }
-        ipcRenderer.send('purchases:add', item)
+        ipcRenderer.send('productSales:add', item)
+        //ipcRenderer.send('stocks:add', item)
         }
         this.close()
       },
     },
   }
 </script>
+

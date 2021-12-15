@@ -272,7 +272,8 @@
           price: this.editedItem.price,
           amount: this.editedItem.amount,
         }
-        ipcRenderer.send('products:add', item)
+        ipcRenderer.send('products:add', item),
+        ipcRenderer.send('stocks:add', item)
         }
         this.close()
       },

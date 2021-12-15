@@ -8,10 +8,10 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="text-h6">
-            Application
+            Gestion
           </v-list-item-title>
           <v-list-item-subtitle>
-            subtext
+            stock
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -85,12 +85,12 @@
           { title: 'Accueil', icon: 'mdi-home', to: '/' },
           { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
           { title: 'Products', icon: 'mdi-basket', to: '/product' },
-          { title: 'Sales', icon: 'mdi-cash-register', to: '/sale' },
+          { title: 'Sales', icon: 'mdi-cash-register', to: '/sales' },
           { title: 'Purchase', icon: 'mdi-cart-variant', to: '/purchase' },
           { title: 'Customers', icon: 'mdi-account-group-outline', to: '/customer' },
           { title: 'Providers', icon: 'mdi-account-group', to: '/provider' },
-          { title: 'Invoice', icon: 'mdi-receipt', to: '/provider' },
-          { title: 'Statistics', icon: 'mdi-finance', to: '/provider' },
+          { title: 'Invoice', icon: 'mdi-receipt', to: '/invoice' },
+          { title: 'Statistics', icon: 'mdi-finance', to: '/statistics' },
           { title: 'Stock', icon: 'mdi-warehouse', to: '/stock' },
           { title: 'Setting', icon: 'mdi-cog', to: '/setting' },
           { title: 'About', icon: 'mdi-information', to: '/about' }

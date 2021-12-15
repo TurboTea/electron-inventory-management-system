@@ -5,11 +5,10 @@
 </template>
 
 <script>
-  import Sales from '../components/Sales'
+  import Sales from '../../components/Sales.vue'
 
   export default {
-    name: 'Sale',
-
+    
     components: {
       Sales,
     },
