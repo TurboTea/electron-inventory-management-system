@@ -244,7 +244,7 @@
         { text: 'Date', value: "date" },
         { text: 'Customer', value: "customerId.raison" },
         { text: 'Total', value: 'total_price' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        // { text: 'Actions', value: 'actions', sortable: false },
       ],
       sales: [],
       customers: [],

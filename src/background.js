@@ -175,12 +175,19 @@ async function createWindow() {
   })
 
   // Load ProductSale
-  ipcMain.on('productSales:load', sendProductSales)
+  ipcMain.on('productSales:load',async (e, id) => {
+    try {
+      const productSales = await ProductSale.find({ saleId: id}).populate("productId")
+      win.webContents.send('productSales:get', JSON.stringify(productSales))
+    } catch (error) {
+      console.log(error)
+    }
+  })
 
   // Send productSale
   async function sendProductSales(id) {
     try {
-      const productSales = await ProductSale.find({ saleId: id })
+      const productSales = await ProductSale.find({ saleId: id}).populate("productId")
       win.webContents.send('productSales:get', JSON.stringify(productSales))
     } catch (err) {
       console.log(err)
@@ -191,17 +198,17 @@ async function createWindow() {
   ipcMain.on('productSales:add', async (e, item) => {
     try {
       await ProductSale.create(item)
-      sendProductSales()
+      sendProductSales(item.saleId)
     } catch (error) {
       console.log(error)
     }
   })
 
   // Delete ProductSale
-  ipcMain.on('productSales:delete', async (e, id) => {
+  ipcMain.on('productSales:delete', async (e, item) => {
     try {
-      await ProductSale.findOneAndDelete({ _id: id })
-      sendProductSales()
+      await ProductSale.findOneAndDelete({ _id: item._id })
+      sendProductSales(item.saleId)
     } catch (error) {
       console.log(error)
     }
@@ -211,13 +218,12 @@ async function createWindow() {
   ipcMain.on('productSales:edit', async (e, item) => {
     try {
       const doc = await ProductSale.findById(item._id);
-      doc.name = item.name;
-      doc.designation = item.designation;
-      doc.code = item.code;
+      doc.productId = item.productId;
       doc.price = item.price;
       doc.amount = item.amount;
+      doc.subTotal = item.subTotal;
       await doc.save();
-      sendProductSales()
+      sendProductSales(item.saleId)
     } catch (error) {
       console.log(error)
     }

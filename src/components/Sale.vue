@@ -133,21 +133,41 @@
               <v-container>
                 <v-row>
                   
-                  
-              
+
                   <v-col
                     cols="12"
                     sm="6"
                     md="4"
                   >
                     <v-select
-                      :items="customers"
-                      label="Customers"
+                      :items="products"
+                      label="Products"
                       item-value="_id"
-                      item-text="raison"
-                      v-model="editedItem.customer"
-                     
+                      item-text="name"
+                      v-model="editedItem.productId"
                     ></v-select>
+                  </v-col>
+
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.amount"
+                      label="Amount"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.price"
+                      label="Price"
+                    ></v-text-field>
                   </v-col>
                   
                 </v-row>
@@ -191,14 +211,6 @@
         small
         class="mr-2"
         color="next"
-        :to="'/Sale/'+ item._id"
-      >
-        mdi-eye
-      </v-icon>
-      <v-icon
-        small
-        class="mr-2"
-        color="next"
         @click="editItem(item)"
       >
         mdi-pencil
@@ -228,8 +240,6 @@
   import {ipcRenderer} from "electron";
   import moment from 'moment'
   
-
-
   export default {
     data: () => ({
       id: '',
@@ -242,28 +252,30 @@
       dialogDelete: false,
       headers: [
         {
-          text: 'Code',
+          text: 'Product',
           align: 'start',
           sortable: false,
-          value: 'code',
+          value: 'productId.name',
         },
-        { text: 'Date', value: "date" },
-        { text: 'Customer', value: "customerId.raison" },
-        { text: 'Total', value: 'total_price' },
+        { text: 'Client', value: "customerId.raison" },
+        { text: 'Description', value: "productId.designation" },
+        { text: 'Quantity', value: "amount" },
+        { text: 'Unit Price', value: 'price' },
+        { text: 'Sub Total', value: 'subTotal' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       productSales: [],
-      customers: [],
+      products: [],
       editedIndex: -1,
       editedItem: {
-        code: '',
-        customer: '',
-        total_price: ''
+        productId: '',
+        amount: '',
+        price: ''
       },
       defaultItem: {
-        code: '',
-        customer: '',
-        total_price: ''
+        productId: '',
+        amount: '',
+        price: ''
       },
     }),
 
@@ -289,21 +301,25 @@
     },
 
     created() {
-      this.initialize(),
       this.getRouteId()
     },
 
     methods: {
       getRouteId() {
-          this.id = this.$route.params.id
+          this.id = this.$route.params.id,
+          this.initialize()
       },
       formatDate(value) {
         return moment(value).format("MMMM DD YYYY, h:mm:ss a")
       },
       initialize () {
-        ipcRenderer.send('productSales:load'),
+        ipcRenderer.send('productSales:load', this.id),
         ipcRenderer.on('productSales:get', (e, productSales) => {
           this.productSales = JSON.parse(productSales)
+        })
+        ipcRenderer.send('products:load'),
+        ipcRenderer.on('products:get', (e, products) => {
+          this.products = JSON.parse(products)
         })
       },
 
@@ -314,12 +330,14 @@
       },
 
       deleteItem (item) {
-        this.editedIndex = item._id
+        this.editedIndex = this.productSales.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        // this.editedIndex = item._id
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        ipcRenderer.send('productSales:delete', this.editedIndex)
+        ipcRenderer.send('productSales:delete', this.editedItem)
         this.closeDelete()
       },
 
@@ -340,18 +358,19 @@
       },
 
       save () {
-        if (this.editedIndex > -1) {
-          ipcRenderer.send('productSales:edit', this.editedItem)
-        } else {
-          var str = String(this.productSales.length++);
-          while (str.length < 5) str = "0" + str;
-          
-          let item = {
-          code: "S" + str,
-          customerId: this.editedItem.customer,
-          total_price: this.editedItem.total_price,
-          
+        let sub_total = this.editedItem.amount * this.editedItem.price
+        
+        let item = {
+          saleId: this.id,
+          productId: this.editedItem.productId,
+          amount: this.editedItem.amount,
+          price: this.editedItem.price,
+          subTotal: sub_total
         }
+        if (this.editedIndex > -1) {
+          this.editedItem = Object.assign(this.editedItem, { productId: item.productId, amount: item.amount, price: item.price, subTotal: item.subTotal })
+          ipcRenderer.send('productSales:edit', this.editedItem)
+        } else { 
         ipcRenderer.send('productSales:add', item)
         //ipcRenderer.send('stocks:add', item)
         }
