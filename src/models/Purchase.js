@@ -1,17 +1,25 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
-const Provider = require('./Provider')
+const Vendor = require('./Vendor')
 
 const PurchaseSchema = new mongoose.Schema({
+  code: {
+    type: String,
+  },
   date: {
     type: Date,
+    default: Date.now,
   },
   total_price: {
     type: Number,
+    min: 0
   },
-  providerId: {
+  vendorId: {
     type: Schema.Types.ObjectId,
-    ref: 'Provider'
+    ref: 'Vendor'
+  },
+  codeIndex: {
+    type: Number,
   },
   created: {
     type: Date,

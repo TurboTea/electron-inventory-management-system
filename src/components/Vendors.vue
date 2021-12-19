@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="providers"
+    :items="vendors"
     sort-by="calories"
     class="elevation-1"
   >
@@ -22,7 +22,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="primary"
+              color="next"
               dark
               class="mb-2"
               v-bind="attrs"
@@ -142,7 +142,8 @@
     </template>
     <template v-slot:no-data>
       <v-btn
-        color="primary"
+        color="next"
+        dark
         @click="initialize"
       >
         Reset
@@ -169,7 +170,7 @@
         { text: 'Created', value: 'created' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      providers: [],
+      vendors: [],
       editedIndex: -1,
       editedItem: {
         raison: '',
@@ -202,26 +203,26 @@
 
     methods: {
       initialize () {
-        ipcRenderer.send('providers:load'),
-        ipcRenderer.on('providers:get', (e, providers) => {
-          this.providers = JSON.parse(providers)
+        ipcRenderer.send('vendors:load'),
+        ipcRenderer.on('vendors:get', (e, vendors) => {
+          this.vendors = JSON.parse(vendors)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.providers.indexOf(item)
+        this.editedIndex = this.vendors.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.providers.indexOf(item)
+        this.editedIndex = this.vendors.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        this.providers.splice(this.editedIndex, 1)
+        this.vendors.splice(this.editedIndex, 1)
         this.closeDelete()
       },
 
@@ -245,15 +246,13 @@
         let item = {
           raison: this.editedItem.raison,
           phone: this.editedItem.phone,
-          
         }
-        console.log('item',item)
-        ipcRenderer.send('providers:add', item),
+        ipcRenderer.send('vendors:add', item),
         this.close()
         /*if (this.editedIndex > -1) {
-          Object.assign(this.providers[this.editedIndex], this.editedItem)
+          Object.assign(this.vendors[this.editedIndex], this.editedItem)
         } else {
-          this.providers.push(this.editedItem)
+          this.vendors.push(this.editedItem)
         }
         this.close()*/
       },

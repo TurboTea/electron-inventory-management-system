@@ -2,14 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Product from '../views/Product.vue'
-import Provider from '../views/Provider.vue'
+import Vendor from '../views/Vendor.vue'
 import Customer from '../views/Customer.vue'
 import Stock from '../views/Stock.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Setting from '../views/Setting.vue'
-//import Sales from '../views/Sale/index.vue'
-//import Sale from '../views/Sale/show.vue'
-import Purchase from '../views/Purchase.vue'
+
 
 Vue.use(VueRouter)
 
@@ -33,9 +31,9 @@ const routes = [
     component: Product
   },
   {
-    path: '/provider',
-    name: 'Provider',
-    component: Provider
+    path: '/Vendor',
+    name: 'Vendor',
+    component: Vendor
   },
   {
     path: '/customer',
@@ -68,9 +66,14 @@ const routes = [
     component: () => import('../views/Sale/show.vue')
   },
   {
-    path: '/purchase',
+    path: '/purchases',
+    name: 'Purchases',
+    component: () => import('../views/Purchase/index.vue')
+  },
+  {
+    path: '/purchase/:id',
     name: 'Purchase',
-    component: Purchase
+    component: () => import('../views/Purchase/show.vue')
   },
 
 ]

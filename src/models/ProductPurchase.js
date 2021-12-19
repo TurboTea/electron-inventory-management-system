@@ -12,6 +12,18 @@ const ProductPurchaseSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Purchase'
   },
+  amount: {
+    type: Number,
+    min: 0
+  },
+  price: {
+    type: Number,
+    min: 0
+  },
+  subTotal: {
+    type: Number,
+    min: 0
+  },
   created: {
     type: Date,
     default: Date.now,

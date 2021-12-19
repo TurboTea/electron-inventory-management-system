@@ -1,17 +1,17 @@
 <template>
   <v-container>
-    <purchases />
+    <purchase />
   </v-container>
 </template>
 
 <script>
-  import Purchases from '../components/Purchases'
+  import Purchase from '../../components/Purchase.vue'
 
   export default {
-    name: 'Purchase',
+    
 
     components: {
-      Purchases,
+      Purchase,
     },
   }
 </script>

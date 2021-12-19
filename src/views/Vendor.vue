@@ -1,17 +1,17 @@
 <template>
   <v-container>
-    <providers />
+    <vendors />
   </v-container>
 </template>
 
 <script>
-  import Providers from '../components/Providers'
+  import Vendors from '../components/Vendors'
 
   export default {
-    name: 'Provider',
+    name: 'Vendor',
 
     components: {
-      Providers,
+      Vendors,
     },
   }
 </script>

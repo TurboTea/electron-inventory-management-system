@@ -13,6 +13,10 @@
       <p class="text-h6 text--primary">
         {{ formatDate(SaleInfo.date) }}
       </p>
+      <div>Total:</div>
+      <p class="text-h6 text--primary">
+        {{ SaleInfo.total_price }}
+      </p>
       
     </v-card-text>
   </v-card>
@@ -298,6 +302,7 @@
 
       save () {
         let sub_total = this.editedItem.amount * this.editedItem.price
+        this.SaleInfo.total_price = this.SaleInfo.total_price + sub_total
         let item = {
           saleId: this.id,
           productId: this.editedItem.productId,
@@ -305,12 +310,14 @@
           price: this.editedItem.price,
           subTotal: sub_total
         }
+        
         if (this.editedIndex > -1) {
           this.editedItem = Object.assign(this.editedItem, { productId: item.productId, amount: item.amount, price: item.price, subTotal: item.subTotal })
           ipcRenderer.send('productSales:edit', this.editedItem)
         } else { 
         ipcRenderer.send('productSales:add', item)
         ipcRenderer.send('stock:minus', item)
+        ipcRenderer.send('saleTotalPrice:edit', this.SaleInfo)
         }
         this.close()
       },

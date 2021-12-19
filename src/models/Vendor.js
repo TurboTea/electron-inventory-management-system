@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const ProviderSchema = new mongoose.Schema({
+const VendorSchema = new mongoose.Schema({
   raison: {
     type: String,
   },
@@ -13,4 +13,4 @@ const ProviderSchema = new mongoose.Schema({
   },
 })
 
-module.exports = mongoose.model('Provider', ProviderSchema)
+module.exports = mongoose.model('Vendor', VendorSchema)

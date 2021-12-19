@@ -109,11 +109,11 @@
         ></v-text-field>
 
         <v-spacer></v-spacer>
-        <!-- <v-dialog
+        <v-dialog
           v-model="dialog"
           max-width="500px"
-        > -->
-          <!-- <template v-slot:activator="{ on, attrs }">
+        > 
+          <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="next"
               dark
@@ -123,9 +123,9 @@
             >
               New Item
             </v-btn>
-          </template> -->
+          </template> 
           
-          <!-- <v-card>
+          <v-card>
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
@@ -169,9 +169,9 @@
                 Save
               </v-btn>
             </v-card-actions>
-          </v-card> -->
-        <!-- </v-dialog> -->
-        <!-- <v-dialog v-model="dialogDelete" max-width="500px">
+          </v-card> 
+        </v-dialog> 
+        <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
             <v-card-actions>
@@ -181,18 +181,18 @@
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
-        </v-dialog> -->
+        </v-dialog> 
       </v-toolbar>
     </template>
-    <!-- <template v-slot:item.actions="{ item }"> -->
-      <!-- <v-icon
+    <!-- <template v-slot:item.actions="{ item }"> 
+      <v-icon
         small
         class="mr-2"
         color="next"
       >
         mdi-eye
-      </v-icon> -->
-      <!-- <v-icon
+      </v-icon> 
+      <v-icon
         small
         class="mr-2"
         color="next"
@@ -206,8 +206,8 @@
         @click="deleteItem(item)"
       >
         mdi-delete
-      </v-icon> -->
-    <!-- </template> -->
+      </v-icon> 
+    </template>  -->
     <template v-slot:no-data>
       <v-btn
         color="next"

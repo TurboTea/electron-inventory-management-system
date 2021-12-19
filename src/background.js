@@ -6,12 +6,13 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const connectDB = require('./config/db')
 const Product = require('./models/Product')
-const Provider = require('./models/Provider')
+const Vendor = require('./models/Vendor')
 const Customer = require('./models/Customer')
 const Stock = require('./models/Stock')
 const ProductPurchase = require('./models/ProductPurchase')
 const ProductSale = require('./models/ProductSale')
 const Sale = require('./models/Sale')
+const Purchase = require('./models/Purchase')
 
 
 // Connect to database
@@ -105,24 +106,24 @@ async function createWindow() {
   //   }
   // })
 
-  // Load prviders
-  ipcMain.on('providers:load', sendProviders)
+  // Load vendors
+  ipcMain.on('vendors:load', sendvendors)
 
-  // Send providers items
-  async function sendProviders() {
+  // Send vendors items
+  async function sendvendors() {
     try {
-      const providers = await Provider.find().sort({ created: 1 })
-      win.webContents.send('providers:get', JSON.stringify(providers))
+      const vendors = await Vendor.find().sort({ created: 1 })
+      win.webContents.send('vendors:get', JSON.stringify(vendors))
     } catch (err) {
       console.log(err)
     }
   }
 
-  // Add providers
-  ipcMain.on('providers:add', async (e, item) => {
+  // Add vendors
+  ipcMain.on('vendors:add', async (e, item) => {
     try {
-      await Provider.create(item)
-      sendProviders()
+      await Vendor.create(item)
+      sendvendors()
     } catch (error) {
       console.log(error)
     }
@@ -174,11 +175,46 @@ async function createWindow() {
     }
   })
 
-  // Edit stock amount
+  // minus stock amount
   ipcMain.on('stock:minus', async (e, item) => {
     try {
       const doc = await Stock.findOne({ productId: item.productId });
-      doc.amount = doc.amount - item.amount;
+      doc.amount = doc.amount - parseInt(item.amount);
+      await doc.save();
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // plus stock amount
+  ipcMain.on('stock:plus', async (e, item) => {
+    try {
+      const doc = await Stock.findOne({ productId: item.productId });
+      doc.amount = doc.amount + parseInt(item.amount);
+      await doc.save();
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit Purchase Total Price
+  ipcMain.on('purchaseTotalPrice:edit', async (e, item) => {
+    console.log('item', item)
+    try {
+      const doc = await Purchase.findOne({ _id: item._id });
+      doc.total_price = item.total_price;
+      await doc.save();
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit Sale Total Price
+  ipcMain.on('saleTotalPrice:edit', async (e, item) => {
+    console.log('item', item)
+    try {
+      const doc = await Sale.findOne({ _id: item._id });
+      doc.total_price = item.total_price;
       await doc.save();
     } catch (error) {
       console.log(error)
@@ -299,6 +335,121 @@ async function createWindow() {
     }
   })
 
+  // Load Purchase to get the vendor
+  ipcMain.on('vendorPurchase:load',async (e, id) => {
+    try {
+      const vendorPurchase = await Purchase.find({ _id: id}).populate("vendorId")
+      win.webContents.send('vendorPurchase:get', JSON.stringify(vendorPurchase))
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Load ProductPurchase
+    ipcMain.on('productPurchases:load',async (e, id) => {
+      try {
+        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId")
+        win.webContents.send('productPurchases:get', JSON.stringify(productPurchases))
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Send productPurchase
+    async function sendProductPurchases(id) {
+      try {
+        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId")
+        win.webContents.send('productPurchases:get', JSON.stringify(productPurchases))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  
+    // Add ProductPurchase
+    ipcMain.on('productPurchases:add', async (e, item) => {
+      try {
+        await ProductPurchase.create(item)
+        sendProductPurchases(item.purchaseId)
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Delete ProductPurchase
+    ipcMain.on('productPurchases:delete', async (e, item) => {
+      try {
+        await ProductPurchase.findOneAndDelete({ _id: item._id })
+        sendProductPurchases(item.purchaseId)
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Edit ProductPurchase
+    ipcMain.on('productPurchases:edit', async (e, item) => {
+      try {
+        const doc = await ProductPurchase.findById(item._id);
+        doc.productId = item.productId;
+        doc.price = item.price;
+        doc.amount = item.amount;
+        doc.subTotal = item.subTotal;
+        await doc.save();
+        sendProductPurchases(item.purchaseId)
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Load Purchases
+    ipcMain.on('purchases:load', sendPurchases)
+  
+    // Send Purchases
+    async function sendPurchases() {
+      try {
+        const purchases = await Purchase.find().sort({ created: 1 }).populate("vendorId")
+        win.webContents.send('purchases:get', JSON.stringify(purchases))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  
+    // Add Purchases
+    ipcMain.on('purchases:add', async (e, item) => {
+      try {
+        await Purchase.create(item)
+        sendPurchases()
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Delete Purchase
+    ipcMain.on('purchases:delete', async (e, id) => {
+      try {
+        await Purchase.findOneAndDelete({ _id: id })
+        sendPurchases()
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Edit Purchase
+    ipcMain.on('purchases:edit', async (e, item) => {
+      try {
+        const doc = await Purchase.findById(item._id);
+        doc.name = item.name;
+        doc.designation = item.designation;
+        doc.code = item.code;
+        doc.price = item.price;
+        doc.amount = item.amount;
+        await doc.save();
+        sendPurchases()
+      } catch (error) {
+        console.log(error)
+      }
+    })
  
 }
 
