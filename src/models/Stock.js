@@ -1,18 +1,11 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
+const Product = require('./Product')
 
 const StockSchema = new mongoose.Schema({
-  code: {
-    type: String,
-  },
-  designation: {
-    type: String,
-  },
-  name: {
-    type: String,
-    //required: [true, 'Log text is required'],
-  },
-  price: {
-    type: Number,
+  productId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product'
   },
   amount: {
     type: Number
@@ -21,6 +14,10 @@ const StockSchema = new mongoose.Schema({
     type: Number
   },
   created: {
+    type: Date,
+    default: Date.now,
+  },
+  updated: {
     type: Date,
     default: Date.now,
   },

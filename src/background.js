@@ -157,7 +157,7 @@ async function createWindow() {
   // Send stock items
   async function sendStocks() {
     try {
-      const stocks = await Stock.find().sort({ created: 1 })
+      const stocks = await Stock.find().sort({ created: 1 }).populate("productId")
       win.webContents.send('stocks:get', JSON.stringify(stocks))
     } catch (err) {
       console.log(err)
@@ -169,6 +169,17 @@ async function createWindow() {
     try {
       await Stock.create(item)
       sendStocks()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit stock amount
+  ipcMain.on('stock:minus', async (e, item) => {
+    try {
+      const doc = await Stock.findOne({ productId: item.productId });
+      doc.amount = doc.amount - item.amount;
+      await doc.save();
     } catch (error) {
       console.log(error)
     }
@@ -277,6 +288,18 @@ async function createWindow() {
       console.log(error)
     }
   })
+
+  // Load Sale to get the customer
+  ipcMain.on('customerSale:load',async (e, id) => {
+    try {
+      const customerSale = await Sale.find({ _id: id}).populate("customerId")
+      win.webContents.send('customerSale:get', JSON.stringify(customerSale))
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+ 
 }
 
 // Quit when all windows are closed.

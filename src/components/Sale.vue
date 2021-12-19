@@ -1,82 +1,21 @@
 <template>
 <v-container fluid>
-  <v-expansion-panels popout>
-        <v-expansion-panel
-          hide-actions
-        >
-          <v-expansion-panel-header>
-               
-                <h2>Filter</h2>
-              
-          </v-expansion-panel-header>
-            
-
-          <v-expansion-panel-content>
-            <v-divider></v-divider>
-            <v-row justify="center">
+  <v-card
+    class="elevation-4"
+    shaped
+  >
+    <v-card-text>
+      <div>Customer:</div>
+      <p class="text-h6 text--primary">
+        {{ CustomerInfo.raison }}
+      </p>
+       <div>Sale date:</div>
+      <p class="text-h6 text--primary">
+        {{ formatDate(SaleInfo.date) }}
+      </p>
       
-
-       <v-col
-        cols="4"
-      >
-        <v-menu
-          v-model="start_date"
-          :close-on-content-click="false"
-          max-width="290"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              :value="computedDateFormattedStartDate"
-              append-icon="mdi-calendar"
-              clearable
-              label="Date Début"
-              readonly
-              single-line
-              v-bind="attrs"
-              v-on="on"
-              @click:clear="date_start = null"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="date_start"
-            @change="start_date = false"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-
-      <v-col
-        cols="4"
-        
-      >
-        <v-menu
-          v-model="end_date"
-          :close-on-content-click="false"
-          max-width="290"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              :value="computedDateFormattedEndDate"
-              append-icon="mdi-calendar"
-              clearable
-              label="Date Fin"
-              readonly
-              single-line
-              v-bind="attrs"
-              v-on="on"
-              @click:clear="date_end = null"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="date_end"
-            @change="end_date = false"
-          ></v-date-picker>
-        </v-menu>
-      </v-col>
-    </v-row>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
- 
+    </v-card-text>
+  </v-card>
   
   <v-data-table
     :headers="headers"
@@ -84,6 +23,7 @@
     :search="search"
     sort-by="code"
     class="elevation-4 mt-4"
+    
   >
     <template v-slot:item.date="{ item }">
       {{ formatDate(item.date) }}
@@ -92,7 +32,7 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>{{ id }}</v-toolbar-title>
+        <v-toolbar-title>{{ SaleInfo.code }}</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -243,10 +183,6 @@
   export default {
     data: () => ({
       id: '',
-      date_start: '',
-      date_end: '',
-      start_date: false,
-      end_date: false,
       search: '',
       dialog: false,
       dialogDelete: false,
@@ -257,7 +193,6 @@
           sortable: false,
           value: 'productId.name',
         },
-        { text: 'Client', value: "customerId.raison" },
         { text: 'Description', value: "productId.designation" },
         { text: 'Quantity', value: "amount" },
         { text: 'Unit Price', value: 'price' },
@@ -266,6 +201,8 @@
       ],
       productSales: [],
       products: [],
+      SaleInfo: [],
+      CustomerInfo: [],
       editedIndex: -1,
       editedItem: {
         productId: '',
@@ -280,12 +217,6 @@
     }),
 
     computed: {
-      computedDateFormattedStartDate () {
-        return this.date_start ? moment(this.date_start).format('dddd, MMMM Do YYYY') : ''
-      },
-      computedDateFormattedEndDate () {
-        return this.date_end ? moment(this.date_end).format('dddd, MMMM Do YYYY') : ''
-      },
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
@@ -309,9 +240,11 @@
           this.id = this.$route.params.id,
           this.initialize()
       },
+
       formatDate(value) {
         return moment(value).format("MMMM DD YYYY, h:mm:ss a")
       },
+      
       initialize () {
         ipcRenderer.send('productSales:load', this.id),
         ipcRenderer.on('productSales:get', (e, productSales) => {
@@ -320,6 +253,12 @@
         ipcRenderer.send('products:load'),
         ipcRenderer.on('products:get', (e, products) => {
           this.products = JSON.parse(products)
+        })
+        ipcRenderer.send('customerSale:load', this.id),
+        ipcRenderer.on('customerSale:get', (e, customerSale) => {
+          this.SaleInfo = JSON.parse(customerSale)
+          this.SaleInfo = this.SaleInfo[0]
+          this.CustomerInfo = this.SaleInfo.customerId
         })
       },
 
@@ -359,7 +298,6 @@
 
       save () {
         let sub_total = this.editedItem.amount * this.editedItem.price
-        
         let item = {
           saleId: this.id,
           productId: this.editedItem.productId,
@@ -372,7 +310,7 @@
           ipcRenderer.send('productSales:edit', this.editedItem)
         } else { 
         ipcRenderer.send('productSales:add', item)
-        //ipcRenderer.send('stocks:add', item)
+        ipcRenderer.send('stock:minus', item)
         }
         this.close()
       },

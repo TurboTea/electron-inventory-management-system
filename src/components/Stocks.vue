@@ -29,7 +29,7 @@
           v-model="dialog"
           max-width="500px"
         >
-          <!-- <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="next"
               dark
@@ -39,7 +39,7 @@
             >
               New Item
             </v-btn>
-          </template> -->
+          </template>
           <v-card>
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
@@ -53,41 +53,15 @@
                     sm="6"
                     md="4"
                   >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Name"
-                    ></v-text-field>
+                    <v-select
+                      :items="products"
+                      label="Products"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="editedItem.productId"
+                    ></v-select>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.designation"
-                      label="Description"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.code"
-                      label="Code"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.price"
-                      label="Price"
-                    ></v-text-field>
-                  </v-col>
+                  
                   <v-col
                     cols="12"
                     sm="6"
@@ -176,29 +150,23 @@
           text: 'Name',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'productId.name',
         },
-        { text: 'Description', value: 'designation' },
-        { text: 'Code', value: 'code' },
-        { text: 'Price', value: 'price' },
+        { text: 'Description', value: 'productId.designation' },
+        { text: 'Code', value: 'productId.code' },
+        { text: 'Price', value: 'productId.price' },
         { text: 'amount', value: 'amount' },
-        { text: 'Created', value: 'created' },
         // { text: 'Actions', value: 'actions', sortable: false },
       ],
       stocks: [],
+      products: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        designation: '',
-        code: '',
-        price: '',
+        productId: '',
         amount: ''
       },
       defaultItem: {
-        name: '',
-        designation: '',
-        code: '',
-        price: '',
+        productId: '',
         amount: ''
       },
     }),
@@ -227,6 +195,10 @@
         ipcRenderer.send('stocks:load'),
         ipcRenderer.on('stocks:get', (e, stocks) => {
           this.stocks = JSON.parse(stocks)
+        })
+        ipcRenderer.send('products:load'),
+        ipcRenderer.on('products:get', (e, products) => {
+          this.products = JSON.parse(products)
         })
       },
 
@@ -267,10 +239,7 @@
           ipcRenderer.send('stocks:edit', this.editedItem)
         } else {
           let item = {
-          name: this.editedItem.name,
-          designation: this.editedItem.designation,
-          code: this.editedItem.code,
-          price: this.editedItem.price,
+          productId: this.editedItem.productId,
           amount: this.editedItem.amount,
         }
         ipcRenderer.send('stocks:add', item)

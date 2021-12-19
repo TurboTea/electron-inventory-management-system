@@ -288,7 +288,6 @@
 
     methods: {
       routerClick(e) {
-        
         this.$router.push({ path: `/sale/${e._id}`  });
       },
       formatDate(value) {

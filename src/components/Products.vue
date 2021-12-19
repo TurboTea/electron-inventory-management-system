@@ -88,16 +88,6 @@
                       label="Price"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.amount"
-                      label="Amount"
-                    ></v-text-field>
-                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -180,8 +170,6 @@
         { text: 'Description', value: 'designation' },
         { text: 'Code', value: 'code' },
         { text: 'Price', value: 'price' },
-        { text: 'amount', value: 'amount' },
-        { text: 'Created', value: 'created' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       products: [],
@@ -191,14 +179,14 @@
         designation: '',
         code: '',
         price: '',
-        amount: ''
+        
       },
       defaultItem: {
         name: '',
         designation: '',
         code: '',
         price: '',
-        amount: ''
+        
       },
     }),
 
@@ -270,10 +258,8 @@
           designation: this.editedItem.designation,
           code: this.editedItem.code,
           price: this.editedItem.price,
-          amount: this.editedItem.amount,
         }
-        ipcRenderer.send('products:add', item),
-        ipcRenderer.send('stocks:add', item)
+        ipcRenderer.send('products:add', item)
         }
         this.close()
       },
