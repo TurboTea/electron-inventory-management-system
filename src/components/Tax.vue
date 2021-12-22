@@ -1,7 +1,8 @@
 <template>
+<v-container fluid>
   <v-data-table
     :headers="headers"
-    :items="customers"
+    :items="taxes"
     sort-by="calories"
     class="elevation-1"
   >
@@ -9,7 +10,7 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Clients</v-toolbar-title>
+        <v-toolbar-title>Tax</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -45,8 +46,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.raison"
-                      label="Raison"
+                      v-model="editedItem.name"
+                      label="Tax Name"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -54,20 +55,13 @@
                     sm="6"
                     md="4"
                   >
-                    <v-text-field
-                      v-model="editedItem.phone"
-                      label="Phone"
-                    ></v-text-field>
-                  </v-col>
-                  <!--<v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.user"
-                      label="User"
-                    ></v-text-field>
+                    <v-select
+                      :items="TaxTypeValues"
+                      label="Tax Type"
+                      item-value="value"
+                      item-text="name"
+                      v-model="editedItem.typeTax"
+                    ></v-select>
                   </v-col>
                   <v-col
                     cols="12"
@@ -75,20 +69,11 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
+                      v-model="editedItem.valueTax"
+                      label="Tax Value"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
-                  </v-col>-->
+                  
                 </v-row>
               </v-container>
             </v-card-text>
@@ -96,14 +81,14 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="next"
+                color="blue darken-1"
                 text
                 @click="close"
               >
                 Cancel
               </v-btn>
               <v-btn
-                color="next"
+                color="blue darken-1"
                 text
                 @click="save"
               >
@@ -145,17 +130,17 @@
     <template v-slot:no-data>
       <v-btn
         color="next"
-        dark
         @click="initialize"
       >
         Reset
       </v-btn>
     </template>
   </v-data-table>
+</v-container>
 </template>
 
 <script>
-  import {ipcRenderer} from "electron";
+import {ipcRenderer} from "electron";
 
   export default {
     data: () => ({
@@ -163,24 +148,28 @@
       dialogDelete: false,
       headers: [
         {
-          text: 'Raison',
+          text: 'Name',
           align: 'start',
           sortable: false,
-          value: 'raison',
+          value: 'name',
         },
-        { text: 'Phone', value: 'phone' },
-        { text: 'Created', value: 'created' },
+        { text: 'Type Tax', value: 'typeTax' },
+        { text: 'Tax Value', value: 'valueTax' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      customers: [],
+      taxes: [],
+      TaxTypeValues: [{ name: 'Sale', value: 'sale' },
+                { name: 'Purchase', value: 'purchase' }],
       editedIndex: -1,
       editedItem: {
-        raison: '',
-        phone: '',
+        name: '',
+        typeTax: '',
+        valueTax: ''
       },
       defaultItem: {
-        raison: '',
-        phone: '',
+        name: '',
+        typeTax: '',
+        valueTax: ''
       },
     }),
 
@@ -199,32 +188,31 @@
       },
     },
 
-    created() {
+    created () {
       this.initialize()
     },
 
     methods: {
       initialize () {
-        ipcRenderer.send('customers:load'),
-        ipcRenderer.on('customers:get', (e, customers) => {
-          this.customers = JSON.parse(customers)
+          ipcRenderer.send('taxes:load'),
+          ipcRenderer.on('taxes:get', (e, taxes) => {
+          this.taxes = JSON.parse(taxes)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.customers.indexOf(item)
+        this.editedIndex = this.taxes.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.customers.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+        this.editedIndex = item._id
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        this.customers.splice(this.editedIndex, 1)
+        ipcRenderer.send('taxes:delete', this.editedIndex)
         this.closeDelete()
       },
 
@@ -245,20 +233,17 @@
       },
 
       save () {
-        let item = {
-          raison: this.editedItem.raison,
-          phone: this.editedItem.phone,
-          
-        }
-        //console.log('item',item)
-        ipcRenderer.send('customers:add', item),
-        this.close()
-        /*if (this.editedIndex > -1) {
-          Object.assign(this.customers[this.editedIndex], this.editedItem)
+        if (this.editedIndex > -1) {
+          ipcRenderer.send('taxes:edit', this.editedItem)
         } else {
-          this.customers.push(this.editedItem)
+            let item = {
+                name: this.editedItem.name,
+                typeTax: this.editedItem.typeTax,
+                valueTax: this.editedItem.valueTax
+            }
+            ipcRenderer.send('taxes:add', item)
         }
-        this.close()*/
+        this.close()
       },
     },
   }

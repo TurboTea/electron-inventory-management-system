@@ -13,6 +13,7 @@ const ProductPurchase = require('./models/ProductPurchase')
 const ProductSale = require('./models/ProductSale')
 const Sale = require('./models/Sale')
 const Purchase = require('./models/Purchase')
+const Tax = require('./models/Tax')
 
 
 // Connect to database
@@ -199,10 +200,11 @@ async function createWindow() {
 
   // Edit Purchase Total Price
   ipcMain.on('purchaseTotalPrice:edit', async (e, item) => {
-    console.log('item', item)
     try {
       const doc = await Purchase.findOne({ _id: item._id });
       doc.total_price = item.total_price;
+      doc.totalUntaxedAmount = item.totalUntaxedAmount;
+      doc.totalTaxes = item.totalTaxes;
       await doc.save();
     } catch (error) {
       console.log(error)
@@ -211,10 +213,11 @@ async function createWindow() {
 
   // Edit Sale Total Price
   ipcMain.on('saleTotalPrice:edit', async (e, item) => {
-    console.log('item', item)
     try {
       const doc = await Sale.findOne({ _id: item._id });
       doc.total_price = item.total_price;
+      doc.totalUntaxedAmount = item.totalUntaxedAmount;
+      doc.totalTaxes = item.totalTaxes;
       await doc.save();
     } catch (error) {
       console.log(error)
@@ -224,7 +227,7 @@ async function createWindow() {
   // Load ProductSale
   ipcMain.on('productSales:load',async (e, id) => {
     try {
-      const productSales = await ProductSale.find({ saleId: id}).populate("productId")
+      const productSales = await ProductSale.find({ saleId: id}).populate("productId").populate("taxId")
       win.webContents.send('productSales:get', JSON.stringify(productSales))
     } catch (error) {
       console.log(error)
@@ -234,7 +237,7 @@ async function createWindow() {
   // Send productSale
   async function sendProductSales(id) {
     try {
-      const productSales = await ProductSale.find({ saleId: id}).populate("productId")
+      const productSales = await ProductSale.find({ saleId: id}).populate("productId").populate("taxId")
       win.webContents.send('productSales:get', JSON.stringify(productSales))
     } catch (err) {
       console.log(err)
@@ -345,12 +348,10 @@ async function createWindow() {
     }
   })
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     // Load ProductPurchase
     ipcMain.on('productPurchases:load',async (e, id) => {
       try {
-        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId")
+        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId").populate("taxId")
         win.webContents.send('productPurchases:get', JSON.stringify(productPurchases))
       } catch (error) {
         console.log(error)
@@ -360,7 +361,7 @@ async function createWindow() {
     // Send productPurchase
     async function sendProductPurchases(id) {
       try {
-        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId")
+        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId").populate("taxId")
         win.webContents.send('productPurchases:get', JSON.stringify(productPurchases))
       } catch (err) {
         console.log(err)
@@ -450,6 +451,53 @@ async function createWindow() {
         console.log(error)
       }
     })
+
+  // Load taxes
+  ipcMain.on('taxes:load', sendTaxes)
+
+  // Send taxes
+  async function sendTaxes() {
+    try {
+      const taxes = await Tax.find().sort({ created: 1 })
+      win.webContents.send('taxes:get', JSON.stringify(taxes))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Add taxes
+  ipcMain.on('taxes:add', async (e, item) => {
+    try {
+      await Tax.create(item)
+      sendTaxes()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit tax
+  ipcMain.on('taxes:edit', async (e, item) => {
+    try {
+      const doc = await Tax.findById(item._id);
+      doc.name = item.name;
+      doc.typeTax = item.typeTax;
+      doc.valueTax = item.valueTax;
+      await doc.save();
+      sendTaxes()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete tax
+  ipcMain.on('taxes:delete', async (e, id) => {
+    try {
+      await Tax.findOneAndDelete({ _id: id })
+      sendTaxes()
+    } catch (error) {
+      console.log(error)
+    }
+  })
  
 }
 

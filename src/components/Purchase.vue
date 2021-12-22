@@ -5,19 +5,35 @@
     shaped
   >
     <v-card-text>
-      <div>Vendor:</div>
-      <p class="text-h6 text--primary">
-        {{ VendorInfo.raison }}
-      </p>
-       <div>Purchase date:</div>
-      <p class="text-h6 text--primary">
-        {{ formatDate(PurchaseInfo.date) }}
-      </p>
-      <div>Total:</div>
-      <p class="text-h6 text--primary">
-        {{ PurchaseInfo.total_price }}
-      </p>
-      
+      <v-row>
+            <v-col>
+              <div>Vendor:</div>
+              <p class="text-h6 text--primary">
+                {{ VendorInfo.raison }}
+              </p>
+              <div>Purchase date:</div>
+              <p class="text-h6 text--primary">
+                {{ formatDate(PurchaseInfo.date) }}
+              </p>
+            </v-col>
+            <v-col>
+              <div>Taxes</div>
+              <p class="text-h6 text--primary">
+                {{ PurchaseInfo.totalTaxes }}
+              </p>
+              <div>Untaxed Amount</div>
+              <p class="text-h6 text--primary">
+                {{ PurchaseInfo.totalUntaxedAmount }}
+              </p>
+              
+            </v-col>
+            <v-col>
+              <div>Total:</div>
+              <p class="text-h6 text--primary">
+                {{ PurchaseInfo.total_price }}
+              </p>
+            </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
   
@@ -113,7 +129,21 @@
                       label="Price"
                     ></v-text-field>
                   </v-col>
-                  
+                   <v-col
+                    cols="12"
+                    sm="6"
+                    md="5"
+                  >
+                   <v-select
+                      :items="taxes"
+                      label="Taxes"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="editedItem.taxId"
+                      single-line
+                      
+                    ></v-select>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -150,6 +180,18 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <!-- <template v-slot:item.tax="{ item }">
+      <v-select
+                      :items="taxes"
+                      label="Taxes"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="editedItem.taxId"
+                      single-line
+                      
+                    ></v-select>
+     
+    </template> -->
     <template v-slot:item.actions="{ item }">
       <v-icon
         small
@@ -200,23 +242,31 @@
         { text: 'Description', value: "productId.designation" },
         { text: 'Quantity', value: "amount" },
         { text: 'Unit Price', value: 'price' },
+        { text: 'Tax', value: 'taxId.name' },
         { text: 'Sub Total', value: 'subTotal' },
+        // { text: 'Tax', value: 'tax', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       productPurchases: [],
       products: [],
       PurchaseInfo: [],
       VendorInfo: [],
+      taxes: [],
+      tax_value: '',
+      untaxed_value: '',
+      sub_total: '',
       editedIndex: -1,
       editedItem: {
         productId: '',
         amount: '',
-        price: ''
+        price: '',
+        taxId: ''
       },
       defaultItem: {
         productId: '',
         amount: '',
-        price: ''
+        price: '',
+        taxId: ''
       },
     }),
 
@@ -248,7 +298,7 @@
       formatDate(value) {
         return moment(value).format("MMMM DD YYYY, h:mm:ss a")
       },
-      
+
       initialize () {
         ipcRenderer.send('productPurchases:load', this.id),
         ipcRenderer.on('productPurchases:get', (e, productPurchases) => {
@@ -263,6 +313,11 @@
           this.PurchaseInfo = JSON.parse(vendorPurchase)
           this.PurchaseInfo = this.PurchaseInfo[0]
           this.VendorInfo = this.PurchaseInfo.vendorId
+        })
+        ipcRenderer.send('taxes:load'),
+          ipcRenderer.on('taxes:get', (e, taxes) => {
+          this.taxes = JSON.parse(taxes)
+          this.taxes = this.taxes.filter(item => item.typeTax === "purchase")
         })
       },
 
@@ -300,23 +355,41 @@
         })
       },
 
-      save () {
-        let sub_total = this.editedItem.amount * this.editedItem.price
-        console.log('this.PurchaseInfo', this.PurchaseInfo)
-        this.PurchaseInfo.total_price = this.PurchaseInfo.total_price + sub_total
+      calculateTaxes () {
+        const result = this.taxes.find(item => item._id == this.editedItem.taxId).valueTax;
+        this.tax_value = this.editedItem.amount * this.editedItem.price * ( result / 100 )
+        this.untaxed_value = this.editedItem.amount * this.editedItem.price
+      },
+
+      calculateTotalPrice () {
+        this.calculateTaxes ()
+        this.sub_total = this.editedItem.amount * this.editedItem.price + this.tax_value
+        this.PurchaseInfo.total_price = this.PurchaseInfo.total_price + this.sub_total
+        this.PurchaseInfo.totalUntaxedAmount = this.PurchaseInfo.totalUntaxedAmount + this.untaxed_value
+        this.PurchaseInfo.totalTaxes = this.PurchaseInfo.totalTaxes + this.tax_value
+      },
+
+      save () {  
+        this.calculateTotalPrice ()
         let item = {
           purchaseId: this.id,
           productId: this.editedItem.productId,
           amount: this.editedItem.amount,
           price: this.editedItem.price,
-          subTotal: sub_total
+          taxId: this.editedItem.taxId,
+          untaxedAmount: this.untaxed_value,
+          taxes: this.tax_value,
+          subTotal: this.sub_total
         }
-        
-        
+
         if (this.editedIndex > -1) {
-          this.editedItem = Object.assign(this.editedItem, { productId: item.productId, amount: item.amount, price: item.price, subTotal: item.subTotal })
+          this.editedItem = Object.assign(this.editedItem, { productId: item.productId, 
+                                                             amount: item.amount, 
+                                                             price: item.price, 
+                                                             taxId: item.taxId, 
+                                                             subTotal: item.subTotal })
           ipcRenderer.send('productPurchases:edit', this.editedItem)
-        } else { 
+        } else {
           ipcRenderer.send('productPurchases:add', item)
           ipcRenderer.send('stock:plus', item)
           ipcRenderer.send('purchaseTotalPrice:edit', this.PurchaseInfo)
@@ -327,3 +400,8 @@
   }
 </script>
 
+<style scoped>
+.v-select{
+      width: 115px;
+}
+</style>

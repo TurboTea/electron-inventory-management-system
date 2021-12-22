@@ -36,9 +36,9 @@
           { title: 'Invoice', img: require('../assets/icons/file.png'), to: '/dashboard' },
           { title: 'Products', img: require('../assets/icons/packaging.png'), to: '/product' },
           { title: 'Customers', img: require('../assets/icons/customer-support.png'), to: '/customer' },
-          { title: 'Providers', img: require('../assets/icons/supplier.png'), to: '/provider' },
-          { title: 'Sales', img: require('../assets/icons/point-of-sale.png'), to: '/provider' },
-          { title: 'Purchase', img: require('../assets/icons/shopping-bag.png'), to: '/provider' },
+          { title: 'Vendors', img: require('../assets/icons/supplier.png'), to: '/vendor' },
+          { title: 'Sales', img: require('../assets/icons/point-of-sale.png'), to: '/sales' },
+          { title: 'Purchase', img: require('../assets/icons/shopping-bag.png'), to: '/purchases' },
           { title: 'Stock', img: require('../assets/icons/warehouse.png'), to: '/stock' },
           { title: 'Setting', img: require('../assets/icons/settings.png'), to: '/setting' },
           { title: 'About', img: require('../assets/icons/information.png'), to: '/about' }

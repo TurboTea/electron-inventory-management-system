@@ -96,14 +96,14 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="blue darken-1"
+                color="next"
                 text
                 @click="close"
               >
                 Cancel
               </v-btn>
               <v-btn
-                color="blue darken-1"
+                color="next"
                 text
                 @click="save"
               >
@@ -129,12 +129,14 @@
       <v-icon
         small
         class="mr-2"
+        color="next"
         @click="editItem(item)"
       >
         mdi-pencil
       </v-icon>
       <v-icon
         small
+        color="red"
         @click="deleteItem(item)"
       >
         mdi-delete
