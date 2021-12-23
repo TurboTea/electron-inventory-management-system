@@ -240,16 +240,20 @@
       tax_value: '',
       untaxed_value: '',
       sub_total: '',
+      ancienAmount: '',
+      newAmount: '',
       editedIndex: -1,
       editedItem: {
         productId: '',
         amount: '',
-        price: ''
+        price: '',
+        taxId: ''
       },
       defaultItem: {
         productId: '',
         amount: '',
-        price: ''
+        price: '',
+        taxId: ''
       },
     }),
 
@@ -281,33 +285,51 @@
       formatDate(value) {
         return moment(value).format("MMMM DD YYYY, h:mm:ss a")
       },
-      
-      initialize () {
+
+      loadProductSales() {
         ipcRenderer.send('productSales:load', this.id),
         ipcRenderer.on('productSales:get', (e, productSales) => {
           this.productSales = JSON.parse(productSales)
         })
+      },
+
+      loadProducts() {
         ipcRenderer.send('products:load'),
         ipcRenderer.on('products:get', (e, products) => {
           this.products = JSON.parse(products)
+          // this.products = this.products.filter(product => !this.productSales.find(productSale => (product._id == productSale.productId._id )) )
         })
+      },
+
+      loadCustomerSale() {
         ipcRenderer.send('customerSale:load', this.id),
         ipcRenderer.on('customerSale:get', (e, customerSale) => {
           this.SaleInfo = JSON.parse(customerSale)
           this.SaleInfo = this.SaleInfo[0]
           this.CustomerInfo = this.SaleInfo.customerId
         })
+      },
+
+      loadTaxes() {
         ipcRenderer.send('taxes:load'),
           ipcRenderer.on('taxes:get', (e, taxes) => {
           this.taxes = JSON.parse(taxes)
           this.taxes = this.taxes.filter(item => item.typeTax === "sale")
         })
       },
+      
+      initialize () {
+        this.loadProductSales()
+        this.loadProducts()
+        this.loadCustomerSale()
+        this.loadTaxes()
+      },
 
       editItem (item) {
         this.editedIndex = this.productSales.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
+        this.ancienAmount = this.editedItem.amount
       },
 
       deleteItem (item) {
@@ -319,6 +341,7 @@
 
       deleteItemConfirm () {
         ipcRenderer.send('productSales:delete', this.editedItem)
+        ipcRenderer.send('stock:plus', this.editedItem)
         this.closeDelete()
       },
 
@@ -339,7 +362,12 @@
       },
 
       calculateTaxes () {
-        const result = this.taxes.find(item => item._id == this.editedItem.taxId).valueTax;
+        let result 
+        if (this.editedIndex > -1) {
+            result = this.taxes.find(item => item._id == this.editedItem.taxId._id).valueTax;
+          } else {
+            result = this.taxes.find(item => item._id == this.editedItem.taxId).valueTax;
+          }
         this.tax_value = this.editedItem.amount * this.editedItem.price * ( result / 100 )
         this.untaxed_value = this.editedItem.amount * this.editedItem.price
       },
@@ -350,6 +378,21 @@
         this.SaleInfo.total_price = this.SaleInfo.total_price + this.sub_total
         this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount + this.untaxed_value
         this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes + this.tax_value
+      },
+
+      updateStockAmount() {
+        let quantity;
+          if ( this.ancienAmount == this.newAmount ) {
+            quantity = 0;
+          } else if ( this.ancienAmount > this.newAmount ) {
+            quantity = this.ancienAmount - this.newAmount
+            this.editedItem = Object.assign(this.editedItem, { amount: quantity })
+            ipcRenderer.send('stock:plus', this.editedItem)
+          } else if ( this.ancienAmount < this.newAmount ) {
+            quantity = this.newAmount - this.ancienAmount
+            this.editedItem = Object.assign(this.editedItem, { amount: quantity })
+            ipcRenderer.send('stock:minus', this.editedItem)
+          }
       },
 
       save () {
@@ -366,16 +409,21 @@
         }
         
         if (this.editedIndex > -1) {
+          this.newAmount = this.editedItem.amount
+          this.updateStockAmount()
           this.editedItem = Object.assign(this.editedItem, { productId: item.productId, 
                                                                         amount: item.amount, 
                                                                         price: item.price,
-                                                                        taxId: item.taxId, 
+                                                                        taxId: item.taxId,
+                                                                        untaxedAmount: item.untaxedAmount,
+                                                                        taxes: item.taxes,  
                                                                         subTotal: item.subTotal })
           ipcRenderer.send('productSales:edit', this.editedItem)
+          ipcRenderer.send('saleTotals:edit', this.SaleInfo)
         } else { 
         ipcRenderer.send('productSales:add', item)
         ipcRenderer.send('stock:minus', item)
-        ipcRenderer.send('saleTotalPrice:edit', this.SaleInfo)
+        ipcRenderer.send('saleTotals:edit', this.SaleInfo)
         }
         this.close()
       },

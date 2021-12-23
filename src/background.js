@@ -212,7 +212,7 @@ async function createWindow() {
   })
 
   // Edit Sale Total Price
-  ipcMain.on('saleTotalPrice:edit', async (e, item) => {
+  ipcMain.on('saleTotals:edit', async (e, item) => {
     try {
       const doc = await Sale.findOne({ _id: item._id });
       doc.total_price = item.total_price;

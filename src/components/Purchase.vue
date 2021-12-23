@@ -316,7 +316,7 @@
         ipcRenderer.send('products:load'),
         ipcRenderer.on('products:get', (e, products) => {
           this.products = JSON.parse(products)
-          this.products = this.products.filter(product => !this.productPurchases.find(productPurchase => (product._id == productPurchase.productId._id )) )
+          // this.products = this.products.filter(product => !this.productPurchases.find(productPurchase => (product._id == productPurchase.productId._id )) )
         })
       },
 
