@@ -202,7 +202,7 @@ async function createWindow() {
   ipcMain.on('purchaseTotals:edit', async (e, item) => {
     try {
       const doc = await Purchase.findOne({ _id: item._id });
-      doc.total_price = item.total_price;
+      doc.totalPrice = item.totalPrice;
       doc.totalUntaxedAmount = item.totalUntaxedAmount;
       doc.totalTaxes = item.totalTaxes;
       await doc.save();
@@ -338,11 +338,11 @@ async function createWindow() {
     }
   })
 
-  // Load Purchase to get the vendor
-  ipcMain.on('vendorPurchase:load',async (e, id) => {
+  // Load Purchase Information
+  ipcMain.on('purchaseInfo:load',async (e, id) => {
     try {
-      const vendorPurchase = await Purchase.find({ _id: id}).populate("vendorId")
-      win.webContents.send('vendorPurchase:get', JSON.stringify(vendorPurchase))
+      const purchaseInfo = await Purchase.findOne({ _id: id}).populate("vendorId")
+      win.webContents.send('purchaseInfo:get', JSON.stringify(purchaseInfo))
     } catch (error) {
       console.log(error)
     }
@@ -351,7 +351,7 @@ async function createWindow() {
     // Load ProductPurchase
     ipcMain.on('productPurchases:load',async (e, id) => {
       try {
-        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId").populate("taxId")
+        const productPurchases = await ProductPurchase.find({ purchaseId: id}).populate("productId").populate("purchaseId").populate("taxId")
         win.webContents.send('productPurchases:get', JSON.stringify(productPurchases))
       } catch (error) {
         console.log(error)

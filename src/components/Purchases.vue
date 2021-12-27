@@ -243,7 +243,7 @@
         },
         { text: 'Date', value: "date" },
         { text: 'vendor', value: "vendorId.raison" },
-        { text: 'Total', value: 'total_price' },
+        { text: 'Total', value: 'totalPrice' },
         // { text: 'Actions', value: 'actions', sortable: false },
       ],
       purchases: [],

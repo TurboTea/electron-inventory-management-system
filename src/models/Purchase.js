@@ -10,7 +10,7 @@ const PurchaseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  total_price: {
+  totalPrice: {
     type: Number,
     default: 0,
     min: 0

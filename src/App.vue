@@ -28,9 +28,14 @@
           :to="item.to"
           link
         >
-          <v-list-item-icon>
-            <v-icon color="next">{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+          <v-list-item-avatar>
+            <!-- <v-icon color="next">{{ item.icon }}</v-icon> -->
+            <v-img
+            left
+            :src="item.img"
+          >
+          </v-img>
+          </v-list-item-avatar>
 
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -82,18 +87,18 @@
       
       drawer: null,
       items: [
-          { title: 'Accueil', icon: 'mdi-home', to: '/' },
-          { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
-          { title: 'Products', icon: 'mdi-basket', to: '/product' },
-          { title: 'Sales', icon: 'mdi-cash-register', to: '/sales' },
-          { title: 'Purchase', icon: 'mdi-cart-variant', to: '/purchases' },
-          { title: 'Customers', icon: 'mdi-account-group-outline', to: '/customer' },
-          { title: 'Vendors', icon: 'mdi-account-group', to: '/vendor' },
-          { title: 'Invoice', icon: 'mdi-receipt', to: '/invoice' },
-          { title: 'Statistics', icon: 'mdi-finance', to: '/statistics' },
-          { title: 'Stock', icon: 'mdi-warehouse', to: '/stock' },
-          { title: 'Setting', icon: 'mdi-cog', to: '/setting' },
-          { title: 'About', icon: 'mdi-information', to: '/about' }
+          { title: 'Accueil', img: require('./assets/icons/home.png'), to: '/' },
+          { title: 'Dashboard', img: require('./assets/icons/dashboard.png'), to: '/dashboard' },
+          { title: 'Products', img: require('./assets/icons/packaging.png'), to: '/product' },
+          { title: 'Sales', img: require('./assets/icons/point-of-sale.png'), to: '/sales' },
+          { title: 'Purchase', img: require('./assets/icons/shopping-bag.png'), to: '/purchases' },
+          { title: 'Customers', img: require('./assets/icons/customer-support.png'), to: '/customer' },
+          { title: 'Vendors', img: require('./assets/icons/supplier.png'), to: '/vendor' },
+          { title: 'Invoice', img: require('./assets/icons/file.png'), to: '/invoice' },
+          { title: 'Statistics', img: require('./assets/icons/statistics.png'), to: '/statistics' },
+          { title: 'Stock', img: require('./assets/icons/warehouse.png'), to: '/stock' },
+          { title: 'Setting', img: require('./assets/icons/settings.png'), to: '/setting' },
+          { title: 'About', img: require('./assets/icons/information.png'), to: '/about' }
         ],
         right: null,
       }),

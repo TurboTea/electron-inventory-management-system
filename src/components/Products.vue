@@ -144,6 +144,7 @@
     <template v-slot:no-data>
       <v-btn
         color="next"
+        dark
         @click="initialize"
       >
         Reset
