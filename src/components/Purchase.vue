@@ -71,7 +71,7 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="700px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -134,7 +134,7 @@
                    <v-col
                     cols="12"
                     sm="6"
-                    md="5"
+                    md="4"
                   >
                    <v-select
                       :items="taxes"
@@ -216,7 +216,9 @@
         dark
         @click="initialize"
       >
-        Reset
+        <v-icon>
+          mdi-reload
+        </v-icon>
       </v-btn>
     </template>
   </v-data-table>
@@ -452,6 +454,7 @@
 
             //
             ipcRenderer.send('purchaseTotals:edit', this.PurchaseInfo)
+            this.editedItem.untaxedAmount = this.untaxed_value
           } else if ( this.untaxed_value < this.editedItem.untaxedAmount ) {
             deffTotal = this.editedItem.untaxedAmount - this.untaxed_value
             
@@ -466,6 +469,7 @@
             this.PurchaseInfo.totalTaxes = this.PurchaseInfo.totalTaxes - tax_value
 
             ipcRenderer.send('purchaseTotals:edit', this.PurchaseInfo)
+            this.editedItem.untaxedAmount = this.untaxed_value
           }
       },
 
@@ -517,7 +521,7 @@
 </script>
 
 <style scoped>
-.v-select{
+/* .v-select{
       width: 115px;
-}
+} */
 </style>

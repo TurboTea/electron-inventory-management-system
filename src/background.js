@@ -215,10 +215,11 @@ async function createWindow() {
   ipcMain.on('saleTotals:edit', async (e, item) => {
     try {
       const doc = await Sale.findOne({ _id: item._id });
-      doc.total_price = item.total_price;
+      doc.totalPrice = item.totalPrice;
       doc.totalUntaxedAmount = item.totalUntaxedAmount;
       doc.totalTaxes = item.totalTaxes;
       await doc.save();
+      sendProductSales(item._id)
     } catch (error) {
       console.log(error)
     }
@@ -271,6 +272,7 @@ async function createWindow() {
       doc.productId = item.productId;
       doc.price = item.price;
       doc.amount = item.amount;
+      doc.untaxedAmount = item.untaxedAmount
       doc.subTotal = item.subTotal;
       await doc.save();
       sendProductSales(item.saleId)
@@ -328,11 +330,11 @@ async function createWindow() {
     }
   })
 
-  // Load Sale to get the customer
-  ipcMain.on('customerSale:load',async (e, id) => {
+  // Load Sale Information
+  ipcMain.on('saleInfo:load',async (e, id) => {
     try {
-      const customerSale = await Sale.find({ _id: id}).populate("customerId")
-      win.webContents.send('customerSale:get', JSON.stringify(customerSale))
+      const saleInfo = await Sale.findOne({ _id: id}).populate("customerId")
+      win.webContents.send('saleInfo:get', JSON.stringify(saleInfo))
     } catch (error) {
       console.log(error)
     }
@@ -395,6 +397,7 @@ async function createWindow() {
         doc.productId = item.productId;
         doc.price = item.price;
         doc.amount = item.amount;
+        doc.untaxedAmount = item.untaxedAmount
         doc.subTotal = item.subTotal;
         await doc.save();
         sendProductPurchases(item.purchaseId)

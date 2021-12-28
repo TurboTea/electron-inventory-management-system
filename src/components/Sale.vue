@@ -30,7 +30,7 @@
             <v-col>
           <div>Total:</div>
           <p class="text-h6 text--primary">
-            {{ SaleInfo.total_price }}
+            {{ SaleInfo.totalPrice }}
           </p>
         </v-col>
       </v-row>
@@ -43,7 +43,6 @@
     :search="search"
     sort-by="code"
     class="elevation-4 mt-4"
-    
   >
     <template v-slot:item.date="{ item }">
       {{ formatDate(item.date) }}
@@ -70,17 +69,19 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="700px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="next"
+              color="success"
               dark
               class="mb-2"
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              <v-icon>
+                mdi-plus-circle
+              </v-icon>
             </v-btn>
           </template>
           
@@ -130,7 +131,7 @@
                   <v-col
                     cols="12"
                     sm="6"
-                    md="5"
+                    md="4"
                   >
                    <v-select
                       :items="taxes"
@@ -149,14 +150,14 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="next"
+                color="red"
                 text
                 @click="close"
               >
                 Cancel
               </v-btn>
               <v-btn
-                color="next"
+                color="primary"
                 text
                 @click="save"
               >
@@ -182,7 +183,7 @@
       <v-icon
         small
         class="mr-2"
-        color="next"
+        color="primary"
         @click="editItem(item)"
       >
         mdi-pencil
@@ -201,7 +202,9 @@
         dark
         @click="initialize"
       >
-        Reset
+        <v-icon>
+          mdi-reload
+        </v-icon>
       </v-btn>
     </template>
   </v-data-table>
@@ -245,15 +248,21 @@
       editedIndex: -1,
       editedItem: {
         productId: '',
-        amount: '',
-        price: '',
-        taxId: ''
+        amount: 0,
+        price: 0,
+        taxId: '',
+        untaxedAmount: 0,
+        taxes: 0,
+        subTotal: 0
       },
       defaultItem: {
         productId: '',
-        amount: '',
-        price: '',
-        taxId: ''
+        amount: 0,
+        price: 0,
+        taxId: '',
+        untaxedAmount: 0,
+        taxes: 0,
+        subTotal: 0
       },
     }),
 
@@ -301,11 +310,10 @@
         })
       },
 
-      loadCustomerSale() {
-        ipcRenderer.send('customerSale:load', this.id),
-        ipcRenderer.on('customerSale:get', (e, customerSale) => {
-          this.SaleInfo = JSON.parse(customerSale)
-          this.SaleInfo = this.SaleInfo[0]
+      loadSaleInfo() {
+        ipcRenderer.send('saleInfo:load', this.id),
+        ipcRenderer.on('saleInfo:get', (e, saleInfo) => {
+          this.SaleInfo = JSON.parse(saleInfo)
           this.CustomerInfo = this.SaleInfo.customerId
         })
       },
@@ -321,7 +329,7 @@
       initialize () {
         this.loadProductSales()
         this.loadProducts()
-        this.loadCustomerSale()
+        this.loadSaleInfo()
         this.loadTaxes()
       },
 
@@ -330,6 +338,7 @@
         this.editedItem = Object.assign({}, item)
         this.dialog = true
         this.ancienAmount = this.editedItem.amount
+        this.untaxed_value = this.editedItem.untaxedAmount
       },
 
       deleteItem (item) {
@@ -342,6 +351,7 @@
       deleteItemConfirm () {
         ipcRenderer.send('productSales:delete', this.editedItem)
         ipcRenderer.send('stock:plus', this.editedItem)
+        this.subtractionTotals ()
         this.closeDelete()
       },
 
@@ -368,61 +378,134 @@
           } else {
             result = this.taxes.find(item => item._id == this.editedItem.taxId).valueTax;
           }
-        this.tax_value = this.editedItem.amount * this.editedItem.price * ( result / 100 )
-        this.untaxed_value = this.editedItem.amount * this.editedItem.price
+        this.editedItem.taxes = this.editedItem.amount * this.editedItem.price * ( result / 100 )
+        this.editedItem.untaxedAmount = this.editedItem.amount * this.editedItem.price
       },
 
-      calculateTotalPrice () {
+      calculateTotals () {
         this.calculateTaxes ()
-        this.sub_total = this.editedItem.amount * this.editedItem.price + this.tax_value
-        this.SaleInfo.total_price = this.SaleInfo.total_price + this.sub_total
-        this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount + this.untaxed_value
-        this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes + this.tax_value
+        this.editedItem.subTotal = this.editedItem.amount * this.editedItem.price + this.editedItem.taxes
+        this.SaleInfo.totalPrice = this.SaleInfo.totalPrice + this.editedItem.subTotal
+        this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount + this.editedItem.untaxedAmount
+        this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes + this.editedItem.taxes
       },
 
-      updateStockAmount() {
+      subtractionTotals () {
+        this.SaleInfo.totalPrice = this.SaleInfo.totalPrice - this.editedItem.subTotal
+        this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount - this.editedItem.untaxedAmount
+        this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes - this.editedItem.taxes
+      
+        ipcRenderer.send('saleTotals:edit', this.SaleInfo)
+      },
+
+      updateTotals () {
+
+        // get tax value 
+        let result 
+        if (this.editedIndex > -1) {
+            result = this.taxes.find(item => item._id == this.editedItem.taxId._id).valueTax;
+          } else {
+            result = this.taxes.find(item => item._id == this.editedItem.taxId).valueTax;
+          }
+
+        // calculate untaxed value
+        this.untaxed_value = this.editedItem.amount * this.editedItem.price
+        
+        //calculate the defrence 
+        let deffTotal;
+        let tax_value;
+        let subTotal;
+          if ( this.untaxed_value == this.editedItem.untaxedAmount ) {
+            deffTotal = 0;
+          } else if ( this.untaxed_value > this.editedItem.untaxedAmount ) {
+            console.log('this.untaxed_value', this.untaxed_value)
+            console.log('this.editedItem.untaxedAmount', this.editedItem.untaxedAmount)
+
+            //calculate the defrence betwen the new and the old untaxed value
+            deffTotal = this.untaxed_value - this.editedItem.untaxedAmount
+            console.log('deffTotal', deffTotal)
+
+            //calculate tax value for the defrence
+            tax_value = deffTotal * ( result / 100 )
+            subTotal = deffTotal + tax_value
+            console.log('tax_value', tax_value)
+            console.log('subTotal', subTotal)
+
+            //update totals value
+            this.editedItem.subTotal = this.editedItem.subTotal + subTotal
+            console.log('this.editedItem.subTotal', this.editedItem.subTotal)
+            this.SaleInfo.totalPrice = this.SaleInfo.totalPrice + subTotal
+            console.log('this.SaleInfo.totalPrice', this.SaleInfo.totalPrice)
+            this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount + deffTotal
+            console.log('this.SaleInfo.totalUntaxedAmount', this.SaleInfo.totalUntaxedAmount)
+            this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes + tax_value
+            console.log('this.SaleInfo.totalTaxes', this.SaleInfo.totalTaxes)
+
+            //
+            ipcRenderer.send('saleTotals:edit', this.SaleInfo)
+            this.editedItem.untaxedAmount = this.untaxed_value
+            console.log('this.editedItem.untaxedAmount', this.editedItem.untaxedAmount)
+            // this.initialize()
+
+          } else if ( this.untaxed_value < this.editedItem.untaxedAmount ) {
+            deffTotal = this.editedItem.untaxedAmount - this.untaxed_value
+            
+            //calculate tax value for the defrence
+            tax_value = deffTotal * ( result / 100 )
+            subTotal = deffTotal + tax_value
+
+            //update totals value
+            this.editedItem.subTotal = this.editedItem.subTotal - subTotal
+            this.SaleInfo.totalPrice = this.SaleInfo.totalPrice - subTotal
+            this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount - deffTotal
+            this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes - tax_value
+
+            ipcRenderer.send('saleTotals:edit', this.SaleInfo)
+            this.editedItem.untaxedAmount = this.untaxed_value
+            
+          }
+      },
+
+      updateStockAmount(item) {
+        let stockItem = {
+          productId: item.productId,
+          amount: ''
+        }
         let quantity;
           if ( this.ancienAmount == this.newAmount ) {
             quantity = 0;
           } else if ( this.ancienAmount > this.newAmount ) {
             quantity = this.ancienAmount - this.newAmount
-            this.editedItem = Object.assign(this.editedItem, { amount: quantity })
-            ipcRenderer.send('stock:plus', this.editedItem)
+            stockItem = Object.assign(stockItem, { amount: quantity })
+            ipcRenderer.send('stock:plus', stockItem)
           } else if ( this.ancienAmount < this.newAmount ) {
             quantity = this.newAmount - this.ancienAmount
-            this.editedItem = Object.assign(this.editedItem, { amount: quantity })
-            ipcRenderer.send('stock:minus', this.editedItem)
+            stockItem = Object.assign(stockItem, { amount: quantity })
+            ipcRenderer.send('stock:minus', stockItem)
           }
       },
 
+      createProductSale () { 
+        ipcRenderer.send('productSales:add', this.editedItem)
+      },
+
+      removeAmountFromStock () {
+        ipcRenderer.send('stock:minus', this.editedItem)
+      },
+
       save () {
-        this.calculateTotalPrice ()
-        let item = {
-          saleId: this.id,
-          productId: this.editedItem.productId,
-          amount: this.editedItem.amount,
-          price: this.editedItem.price,
-          taxId: this.editedItem.taxId,
-          untaxedAmount: this.untaxed_value,
-          taxes: this.tax_value,
-          subTotal: this.sub_total
-        }
-        
+        this.editedItem.saleId = this.id
         if (this.editedIndex > -1) {
           this.newAmount = this.editedItem.amount
-          this.updateStockAmount()
-          this.editedItem = Object.assign(this.editedItem, { productId: item.productId, 
-                                                                        amount: item.amount, 
-                                                                        price: item.price,
-                                                                        taxId: item.taxId,
-                                                                        untaxedAmount: item.untaxedAmount,
-                                                                        taxes: item.taxes,  
-                                                                        subTotal: item.subTotal })
+          this.updateStockAmount(this.editedItem)
+          console.log('Save', this.editedItem.untaxedAmount)
+          this.updateTotals ()
           ipcRenderer.send('productSales:edit', this.editedItem)
-          ipcRenderer.send('saleTotals:edit', this.SaleInfo)
+          // ipcRenderer.send('purchaseTotals:edit', this.PurchaseInfo)
         } else { 
-        ipcRenderer.send('productSales:add', item)
-        ipcRenderer.send('stock:minus', item)
+        this.calculateTotals (),
+        this.createProductSale (),
+        this.removeAmountFromStock (),
         ipcRenderer.send('saleTotals:edit', this.SaleInfo)
         }
         this.close()
