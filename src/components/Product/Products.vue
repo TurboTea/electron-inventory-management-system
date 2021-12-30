@@ -6,9 +6,17 @@
     sort-by="name"
     class="elevation-4"
   >
-    <template v-slot:item.imageUrl="{ item }">
-        <v-img :src="item.imageUrl" style="width: 50px; height: 50px"/>
+    <template v-slot:item.durability="{ item }">
+      <v-chip
+        :color="getColor(item.durability)"
+        dark
+      >
+        {{ item.durability }}
+      </v-chip>
     </template>
+    <!-- <template v-slot:item.imageUrl="{ item }">
+        <v-img :src="item.imageUrl" style="width: 50px; height: 50px"/>
+    </template> -->
     <template v-slot:top>
       <v-toolbar
         flat
@@ -30,7 +38,7 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="700px"
+          max-width="900px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -39,6 +47,7 @@
               class="mb-2"
               v-bind="attrs"
               v-on="on"
+              @click="generateCode"
             >
               <v-icon>
                 mdi-plus-circle
@@ -68,15 +77,17 @@
                   <v-col
                     cols="12"
                     sm="6"
-                    md="4"
+                    md="8"
                   >
-                    <v-text-field
+                    <v-textarea
                       v-model="editedItem.designation"
                       label="Description Produit"
                       outlined
                       dense
-                    ></v-text-field>
+                    ></v-textarea>
                   </v-col>
+                </v-row>
+                <v-row>
                   <v-col
                     cols="12"
                     sm="6"
@@ -95,12 +106,82 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.price"
-                      label="Prix Produit"
+                      v-model="editedItem.costPrice"
+                      label="Prix D'achat"
                       type="number"
                       outlined
                       dense
                     ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.salePrice"
+                      label="Prix de Vente"
+                      type="number"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.alertQuantity"
+                      label="Quantité d'alerte"
+                      type="number"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                  <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-checkbox
+                      v-model="editedItem.durability"
+                      :label="`durabilité`"
+                      dense
+                    ></v-checkbox>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="8"
+                  >
+                    <v-menu
+                      v-model="date_expiration"
+                      :close-on-content-click="false"
+                      max-width="290"
+                      v-if="editedItem.durability"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          :value="computedDateFormattedExpirationDate"
+                          append-icon="mdi-calendar"
+                          clearable
+                          label="Date d'expiration"
+                          readonly
+                          outlined
+                          dense
+                          v-bind="attrs"
+                          v-on="on"
+                          @click:clear="editedItem.expirationDate = null"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="editedItem.expirationDate"
+                        @change="date_expiration = false"
+                      ></v-date-picker>
+                    </v-menu>
                   </v-col>
                   </v-row>
                   <v-row>
@@ -113,7 +194,7 @@
                       v-model="image" 
                       type="file" 
                       label="Photo Produit" 
-                      hint="Add a picture of youre product" 
+                      hint="Ajoutez une photo de votre produit" 
                       outlined
                       dense 
                       @change="onFileChange" 
@@ -126,8 +207,9 @@
                     >
                     <v-img 
                     :src="editedItem.imageUrl"
-                     contain
-                    style="border: 1px dashed #ccc; min-height: 250px" 
+                    contain
+                    width="100%"
+                    style="border: 1px dashed #ccc; min-height: 530px" 
                     />
                   </v-col>
                   </v-row>
@@ -140,13 +222,13 @@
                 color="error"
                 @click="close"
               >
-                Cancel
+                Annuler
               </v-btn>
               <v-btn
                 color="success"
                 @click="save"
               >
-                Save
+                Sauvegarder
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -206,13 +288,14 @@
 
 <script>
   import {ipcRenderer} from "electron";
+  import moment from 'moment'
 
   export default {
     data: () => ({
       search: '',
+      date_expiration: '',
       dialog: false,
       dialogDelete: false,
-      imgPreview: '',
       image: undefined,
       headers: [
         {
@@ -223,8 +306,10 @@
         },
         { text: 'Description Produit', value: 'designation' },
         { text: 'Code Produit', value: 'code' },
-        { text: 'Prix Produit', value: 'price' },
-        { text: 'Photo Produit', value: 'imageUrl' },
+        { text: 'Prix Achat', value: 'costPrice' },
+        { text: 'Prix Vente', value: 'salePrice' },
+        { text: 'Durabilité', value: 'durability' },
+        // { text: 'Photo Produit', value: 'imageUrl' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       products: [],
@@ -233,23 +318,35 @@
         name: '',
         designation: '',
         code: '',
-        price: '',
-        imageUrl: ''
-        
+        costPrice: '',
+        salePrice: '',
+        durability: false,
+        qrCode: '',
+        alertQuantity: '',
+        imageUrl: '',
+        expirationDate: '',
       },
       defaultItem: {
         name: '',
         designation: '',
         code: '',
-        price: '',
-        imageUrl: ''
+        costPrice: '',
+        salePrice: '',
+        durability: false,
+        qrCode: '',
+        alertQuantity: '',
+        imageUrl: '',
+        expirationDate: '',
         
       },
     }),
 
     computed: {
+      computedDateFormattedExpirationDate () {
+        return this.editedItem.expirationDate ? moment(this.editedItem.expirationDate).format('dddd, MMMM Do YYYY, h:mm:ss a') : ''
+      },
       formTitle () {
-        return this.editedIndex === -1 ? 'Nouveau' : 'Modifier'
+        return this.editedIndex === -1 ? 'Nouveau Produit' : 'Modifier Produit'
       },
     },
 
@@ -268,22 +365,27 @@
 
     methods: {
 
+      getColor (valeur) {
+        if (valeur == true) return 'orange'
+        else return 'green'
+      },
+
       routerClick(e) {
         this.$router.push({ path: `/product/${e._id}`  });
       },
 
       createImage(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.editedItem.imageUrl = e.target.result;
-      };
-      reader.readAsDataURL(file);
-      },
-      onFileChange(file) {
-        if (!file) {
-          return;
-        }
-        this.createImage(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.editedItem.imageUrl = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        },
+        onFileChange(file) {
+          if (!file) {
+            return;
+          }
+          this.createImage(file);
       },
 
       initialize () {
@@ -323,6 +425,16 @@
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         })
+      },
+
+      generateCode () {
+        console.log('length', this.products.length)
+         var str = String(this.products.length++);
+         console.log('str', str)
+          while (str.length < 5) str = "0" + str;
+          this.editedItem.code = "A" + str
+          console.log('code', this.editedItem.code)
+          str = 0
       },
 
       save () {

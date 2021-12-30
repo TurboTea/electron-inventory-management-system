@@ -11,13 +11,33 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     //required: [true, 'Log text is required'],
   },
-  price: {
+  costPrice: {
     type: Number,
+  },
+  salePrice: {
+    type: Number,
+  },
+  durability: {
+    type: Boolean,
+    default: false
+  },
+  qrCode: {
+    type: String,
   },
   imageUrl: {
     type: String,
   },
+  alertQuantity: {
+    type: Number,
+  },
+  expirationDate: {
+    type: Date,
+  },
   created: {
+    type: Date,
+    default: Date.now,
+  },
+  updated: {
     type: Date,
     default: Date.now,
   },

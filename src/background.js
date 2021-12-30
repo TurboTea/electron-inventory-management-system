@@ -88,8 +88,14 @@ async function createWindow() {
       doc.name = item.name;
       doc.designation = item.designation;
       doc.code = item.code;
-      doc.price = item.price;
-      doc.amount = item.amount;
+      doc.costPrice = item.costPrice;
+      doc.salePrice = item.salePrice;
+      doc.durability = item.durability;
+      doc.qrCode = item.qrCode;
+      doc.alertQuantity = item.alertQuantity;
+      doc.imageUrl = item.imageUrl;
+      doc.expirationDate = item.expirationDate;
+     
       await doc.save();
       sendProducts()
     } catch (error) {
