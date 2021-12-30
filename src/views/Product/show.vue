@@ -1,15 +1,15 @@
 <template>
   <v-container>
-    <dashboard />
+    <product />
   </v-container>
 </template>
 
 <script>
-  import Dashboard from '../components/Dashboard'
+  import Product from '../../components/Product/Product.vue'
 
   export default {
     components: {
-      Dashboard,
+      Product,
     },
   }
 </script>

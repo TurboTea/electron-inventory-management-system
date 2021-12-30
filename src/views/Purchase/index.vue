@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import Purchases from '../../components/Purchases.vue'
+  import Purchases from '../../components/Purchase/Purchases.vue'
 
   export default {
     

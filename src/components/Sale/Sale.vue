@@ -418,34 +418,22 @@
           if ( this.untaxed_value == this.editedItem.untaxedAmount ) {
             deffTotal = 0;
           } else if ( this.untaxed_value > this.editedItem.untaxedAmount ) {
-            console.log('this.untaxed_value', this.untaxed_value)
-            console.log('this.editedItem.untaxedAmount', this.editedItem.untaxedAmount)
-
             //calculate the defrence betwen the new and the old untaxed value
             deffTotal = this.untaxed_value - this.editedItem.untaxedAmount
-            console.log('deffTotal', deffTotal)
 
             //calculate tax value for the defrence
             tax_value = deffTotal * ( result / 100 )
             subTotal = deffTotal + tax_value
-            console.log('tax_value', tax_value)
-            console.log('subTotal', subTotal)
 
             //update totals value
             this.editedItem.subTotal = this.editedItem.subTotal + subTotal
-            console.log('this.editedItem.subTotal', this.editedItem.subTotal)
             this.SaleInfo.totalPrice = this.SaleInfo.totalPrice + subTotal
-            console.log('this.SaleInfo.totalPrice', this.SaleInfo.totalPrice)
             this.SaleInfo.totalUntaxedAmount = this.SaleInfo.totalUntaxedAmount + deffTotal
-            console.log('this.SaleInfo.totalUntaxedAmount', this.SaleInfo.totalUntaxedAmount)
             this.SaleInfo.totalTaxes = this.SaleInfo.totalTaxes + tax_value
-            console.log('this.SaleInfo.totalTaxes', this.SaleInfo.totalTaxes)
 
             //
             ipcRenderer.send('saleTotals:edit', this.SaleInfo)
             this.editedItem.untaxedAmount = this.untaxed_value
-            console.log('this.editedItem.untaxedAmount', this.editedItem.untaxedAmount)
-            // this.initialize()
 
           } else if ( this.untaxed_value < this.editedItem.untaxedAmount ) {
             deffTotal = this.editedItem.untaxedAmount - this.untaxed_value
@@ -498,7 +486,6 @@
         if (this.editedIndex > -1) {
           this.newAmount = this.editedItem.amount
           this.updateStockAmount(this.editedItem)
-          console.log('Save', this.editedItem.untaxedAmount)
           this.updateTotals ()
           ipcRenderer.send('productSales:edit', this.editedItem)
           // ipcRenderer.send('purchaseTotals:edit', this.PurchaseInfo)

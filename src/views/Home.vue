@@ -31,17 +31,17 @@
     data: () => ({ 
       items: [
           { title: 'Accueil', img: require('../assets/icons/home.png'), to: '/' },
-          { title: 'Dashboard', img: require('../assets/icons/dashboard.png'), to: '/dashboard' },
-          { title: 'Statistics', img: require('../assets/icons/statistics.png'), to: '/dashboard' },
-          { title: 'Invoice', img: require('../assets/icons/file.png'), to: '/dashboard' },
-          { title: 'Products', img: require('../assets/icons/packaging.png'), to: '/product' },
-          { title: 'Customers', img: require('../assets/icons/customer-support.png'), to: '/customer' },
-          { title: 'Vendors', img: require('../assets/icons/supplier.png'), to: '/vendor' },
-          { title: 'Sales', img: require('../assets/icons/point-of-sale.png'), to: '/sales' },
-          { title: 'Purchase', img: require('../assets/icons/shopping-bag.png'), to: '/purchases' },
+          { title: 'Tableau de bord', img: require('../assets/icons/dashboard.png'), to: '/dashboard' },
+          { title: 'Statistiques', img: require('../assets/icons/statistics.png'), to: '/dashboard' },
+          { title: 'Factures', img: require('../assets/icons/file.png'), to: '/dashboard' },
+          { title: 'Produits', img: require('../assets/icons/packaging.png'), to: '/product' },
+          { title: 'Clients', img: require('../assets/icons/customer-support.png'), to: '/customer' },
+          { title: 'Fournisseurs', img: require('../assets/icons/supplier.png'), to: '/vendor' },
+          { title: 'Ventes', img: require('../assets/icons/point-of-sale.png'), to: '/sales' },
+          { title: 'Achats', img: require('../assets/icons/shopping-bag.png'), to: '/purchases' },
           { title: 'Stock', img: require('../assets/icons/warehouse.png'), to: '/stock' },
-          { title: 'Setting', img: require('../assets/icons/settings.png'), to: '/setting' },
-          { title: 'About', img: require('../assets/icons/information.png'), to: '/about' }
+          { title: 'Paramètres', img: require('../assets/icons/settings.png'), to: '/setting' },
+          { title: 'À propos', img: require('../assets/icons/information.png'), to: '/about' }
         ],
       }),
   }

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Product from '../views/Product.vue'
 import Vendor from '../views/Vendor.vue'
 import Customer from '../views/Customer.vue'
 import Stock from '../views/Stock.vue'
@@ -24,11 +23,6 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  },
-  {
-    path: '/product',
-    name: 'Product',
-    component: Product
   },
   {
     path: '/Vendor',
@@ -75,6 +69,16 @@ const routes = [
     name: 'Purchase',
     component: () => import('../views/Purchase/show.vue')
   },
+  {
+    path: '/products',
+    name: 'Products',
+    component: () => import('../views/Product/index.vue')
+  },
+  {
+    path: '/product/:id',
+    name: 'Product',
+    component: () => import('../views/Product/show.vue')
+  }
 
 ]
 

@@ -4,8 +4,11 @@
     :items="products"
     :search="search"
     sort-by="name"
-    class="elevation-1"
+    class="elevation-4"
   >
+    <template v-slot:item.imageUrl="{ item }">
+        <v-img :src="item.imageUrl" style="width: 50px; height: 50px"/>
+    </template>
     <template v-slot:top>
       <v-toolbar
         flat
@@ -19,7 +22,7 @@
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            label="Recherche"
             single-line
             hide-details
             class="shrink mx-4"
@@ -27,7 +30,7 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="700px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -37,7 +40,9 @@
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              <v-icon>
+                mdi-plus-circle
+              </v-icon>
             </v-btn>
           </template>
           <v-card>
@@ -55,7 +60,9 @@
                   >
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Name"
+                      label="Nom Produit"
+                      outlined
+                      dense
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -65,7 +72,9 @@
                   >
                     <v-text-field
                       v-model="editedItem.designation"
-                      label="Description"
+                      label="Description Produit"
+                      outlined
+                      dense
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -75,7 +84,9 @@
                   >
                     <v-text-field
                       v-model="editedItem.code"
-                      label="Code"
+                      label="Code Produit"
+                      outlined
+                      dense
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -85,25 +96,54 @@
                   >
                     <v-text-field
                       v-model="editedItem.price"
-                      label="Price"
+                      label="Prix Produit"
+                      type="number"
+                      outlined
+                      dense
                     ></v-text-field>
                   </v-col>
-                </v-row>
+                  </v-row>
+                  <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                    >
+                    <v-file-input 
+                      v-model="image" 
+                      type="file" 
+                      label="Photo Produit" 
+                      hint="Add a picture of youre product" 
+                      outlined
+                      dense 
+                      @change="onFileChange" 
+                    />
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="8"
+                    >
+                    <v-img 
+                    :src="editedItem.imageUrl"
+                     contain
+                    style="border: 1px dashed #ccc; min-height: 250px" 
+                    />
+                  </v-col>
+                  </v-row>
               </v-container>
             </v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="next"
-                text
+                color="error"
                 @click="close"
               >
                 Cancel
               </v-btn>
               <v-btn
-                color="next"
-                text
+                color="success"
                 @click="save"
               >
                 Save
@@ -125,10 +165,18 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
+       <v-icon
+        small
+        class="mr-2"
+        color="success"
+        @click="routerClick($event)"
+      >
+        mdi-eye
+      </v-icon>
       <v-icon
         small
         class="mr-2"
-        color="next"
+        color="primary"
         @click="editItem(item)"
       >
         mdi-pencil
@@ -140,6 +188,7 @@
       >
         mdi-delete
       </v-icon>
+     
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -147,7 +196,9 @@
         dark
         @click="initialize"
       >
-        Reset
+        <v-icon>
+          mdi-reload
+        </v-icon>
       </v-btn>
     </template>
   </v-data-table>
@@ -161,16 +212,19 @@
       search: '',
       dialog: false,
       dialogDelete: false,
+      imgPreview: '',
+      image: undefined,
       headers: [
         {
-          text: 'Name',
+          text: 'Nom Produit',
           align: 'start',
           sortable: false,
           value: 'name',
         },
-        { text: 'Description', value: 'designation' },
-        { text: 'Code', value: 'code' },
-        { text: 'Price', value: 'price' },
+        { text: 'Description Produit', value: 'designation' },
+        { text: 'Code Produit', value: 'code' },
+        { text: 'Prix Produit', value: 'price' },
+        { text: 'Photo Produit', value: 'imageUrl' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       products: [],
@@ -180,6 +234,7 @@
         designation: '',
         code: '',
         price: '',
+        imageUrl: ''
         
       },
       defaultItem: {
@@ -187,13 +242,14 @@
         designation: '',
         code: '',
         price: '',
+        imageUrl: ''
         
       },
     }),
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'Nouveau' : 'Modifier'
       },
     },
 
@@ -211,6 +267,25 @@
     },
 
     methods: {
+
+      routerClick(e) {
+        this.$router.push({ path: `/product/${e._id}`  });
+      },
+
+      createImage(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.editedItem.imageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      },
+      onFileChange(file) {
+        if (!file) {
+          return;
+        }
+        this.createImage(file);
+      },
+
       initialize () {
         ipcRenderer.send('products:load'),
         ipcRenderer.on('products:get', (e, products) => {
@@ -254,16 +329,29 @@
         if (this.editedIndex > -1) {
           ipcRenderer.send('products:edit', this.editedItem)
         } else {
-          let item = {
-          name: this.editedItem.name,
-          designation: this.editedItem.designation,
-          code: this.editedItem.code,
-          price: this.editedItem.price,
-        }
-        ipcRenderer.send('products:add', item)
+          ipcRenderer.send('products:add', this.editedItem)
         }
         this.close()
       },
     },
   }
 </script>
+
+<style scoped>
+  .v-card__title {
+    background-color: #00366f;
+    color: white;
+  }
+  .v-card__actions {
+    background-color: #00366f;
+  }
+  .col {
+    padding: 0px !important;
+    max-width: 300px;
+  }
+  /* .col {
+    padding: 0px;
+    padding-bottom: 0px;
+    padding-top: 12px;
+  } */
+</style>

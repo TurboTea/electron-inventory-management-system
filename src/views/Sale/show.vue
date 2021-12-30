@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import Sale from '../../components/Sale.vue'
+  import Sale from '../../components/Sale/Sale.vue'
 
   export default {
     

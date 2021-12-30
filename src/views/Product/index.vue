@@ -5,11 +5,9 @@
 </template>
 
 <script>
-  import Products from '../components/Products'
+  import Products from '../../components/Product/Products'
 
   export default {
-    name: 'Product',
-
     components: {
       Products,
     },
