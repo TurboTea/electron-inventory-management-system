@@ -2,15 +2,15 @@
 <v-container fluid>
   <v-data-table
     :headers="headers"
-    :items="taxes"
-    sort-by="calories"
+    :items="families"
+    sort-by="name"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Tax</v-toolbar-title>
+        <v-toolbar-title>Family</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -49,33 +49,10 @@
                   >
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Tax Name"
+                      label="Family Name"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-select
-                      :items="TaxTypeValues"
-                      label="Tax Type"
-                      item-value="value"
-                      item-text="name"
-                      v-model="editedItem.typeTax"
-                    ></v-select>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.valueTax"
-                      label="Tax Value"
-                    ></v-text-field>
-                  </v-col>
-                  
+                   
                 </v-row>
               </v-container>
             </v-card-text>
@@ -158,23 +135,15 @@ import {ipcRenderer} from "electron";
           sortable: false,
           value: 'name',
         },
-        { text: 'Type Tax', value: 'typeTax' },
-        { text: 'Tax Value', value: 'valueTax' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      taxes: [],
-      TaxTypeValues: [{ name: 'Sale', value: 'sale' },
-                { name: 'Purchase', value: 'purchase' }],
+      families: [],
       editedIndex: -1,
       editedItem: {
         name: '',
-        typeTax: '',
-        valueTax: ''
       },
       defaultItem: {
         name: '',
-        typeTax: '',
-        valueTax: ''
       },
     }),
 
@@ -199,14 +168,14 @@ import {ipcRenderer} from "electron";
 
     methods: {
       initialize () {
-          ipcRenderer.send('taxes:load'),
-          ipcRenderer.on('taxes:get', (e, taxes) => {
-          this.taxes = JSON.parse(taxes)
+          ipcRenderer.send('families:load'),
+          ipcRenderer.on('families:get', (e, families) => {
+          this.families = JSON.parse(families)
         })
       },
 
       editItem (item) {
-        this.editedIndex = this.taxes.indexOf(item)
+        this.editedIndex = this.families.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
@@ -217,7 +186,7 @@ import {ipcRenderer} from "electron";
       },
 
       deleteItemConfirm () {
-        ipcRenderer.send('taxes:delete', this.editedIndex)
+        ipcRenderer.send('families:delete', this.editedIndex)
         this.closeDelete()
       },
 
@@ -239,14 +208,9 @@ import {ipcRenderer} from "electron";
 
       save () {
         if (this.editedIndex > -1) {
-          ipcRenderer.send('taxes:edit', this.editedItem)
+          ipcRenderer.send('families:edit', this.editedItem)
         } else {
-            let item = {
-                name: this.editedItem.name,
-                typeTax: this.editedItem.typeTax,
-                valueTax: this.editedItem.valueTax
-            }
-            ipcRenderer.send('taxes:add', item)
+            ipcRenderer.send('families:add', this.editedItem)
         }
         this.close()
       },

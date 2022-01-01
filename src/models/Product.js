@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
 
 const ProductSchema = new mongoose.Schema({
   code: {
@@ -21,9 +22,6 @@ const ProductSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  qrCode: {
-    type: String,
-  },
   imageUrl: {
     type: String,
   },
@@ -32,6 +30,14 @@ const ProductSchema = new mongoose.Schema({
   },
   expirationDate: {
     type: Date,
+  },
+  familyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Family'
+  },
+  unitId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Unit'
   },
   created: {
     type: Date,

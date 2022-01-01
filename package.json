@@ -19,6 +19,7 @@
     "moment": "^2.29.1",
     "mongoose": "^6.0.15",
     "roboto-fontface": "*",
+    "v-qrcode": "^1.0.3",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0",

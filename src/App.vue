@@ -18,7 +18,7 @@
         <v-list-item-content>
         
           <v-list-item-title class="text-h6">
-            Next
+            Eurl Next
           </v-list-item-title>
           <v-list-item-subtitle>
             challenge

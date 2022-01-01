@@ -103,6 +103,15 @@
                   <v-col
                     cols="12"
                     sm="6"
+                    md="8"
+                  >
+                      <qrcode :value="editedItem.code" :size=530></qrcode>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
                     md="4"
                   >
                     <v-text-field
@@ -139,6 +148,72 @@
                       dense
                     ></v-text-field>
                   </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                  <v-row 
+                    style="margin: 0"
+                  >
+                    <v-select
+                      :items="families"
+                      label="Familles"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="editedItem.familyId"
+                      outlined
+                      dense
+                    ></v-select>
+
+                    <v-btn
+                      text
+                      icon
+                      color="next"
+                      to="/setting"
+                    >
+                      <v-icon>
+                        mdi-open-in-new
+                      </v-icon>
+                    </v-btn>
+                  </v-row>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  >
+                  <v-row 
+                    style="margin: 0"
+                  >
+                    <v-select
+                      :items="units"
+                      label="Unité de mesure"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="editedItem.unitId"
+                      outlined
+                      dense
+                    ></v-select>
+
+                    <v-btn
+                     
+                      text
+                      icon
+                      color="next"
+                      to="/setting"
+                    >
+                      <v-icon>
+                        mdi-open-in-new
+                      </v-icon>
+                    </v-btn>
+                  </v-row>
+                    
+                  </v-col>
+                
+              
                 </v-row>
                   <v-row>
                   <v-col
@@ -213,6 +288,7 @@
                     />
                   </v-col>
                   </v-row>
+                 
               </v-container>
             </v-card-text>
 
@@ -288,9 +364,13 @@
 
 <script>
   import {ipcRenderer} from "electron";
-  import moment from 'moment'
+  import moment from 'moment';
+  import Qrcode from 'v-qrcode/src/index'
 
   export default {
+    components: {
+      Qrcode,
+    },
     data: () => ({
       search: '',
       date_expiration: '',
@@ -313,6 +393,8 @@
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       products: [],
+      families: [],
+      units: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -325,6 +407,7 @@
         alertQuantity: '',
         imageUrl: '',
         expirationDate: '',
+        familyId: ''
       },
       defaultItem: {
         name: '',
@@ -337,7 +420,7 @@
         alertQuantity: '',
         imageUrl: '',
         expirationDate: '',
-        
+        familyId: ''
       },
     }),
 
@@ -392,6 +475,14 @@
         ipcRenderer.send('products:load'),
         ipcRenderer.on('products:get', (e, products) => {
           this.products = JSON.parse(products)
+        }),
+        ipcRenderer.send('families:load'),
+        ipcRenderer.on('families:get', (e, families) => {
+          this.families = JSON.parse(families)
+        })
+        ipcRenderer.send('units:load'),
+        ipcRenderer.on('units:get', (e, units) => {
+          this.units = JSON.parse(units)
         })
       },
 
@@ -428,13 +519,9 @@
       },
 
       generateCode () {
-        console.log('length', this.products.length)
-         var str = String(this.products.length++);
-         console.log('str', str)
+          var str = String(this.products.length++);
           while (str.length < 5) str = "0" + str;
           this.editedItem.code = "A" + str
-          console.log('code', this.editedItem.code)
-          str = 0
       },
 
       save () {
@@ -461,9 +548,4 @@
     padding: 0px !important;
     max-width: 300px;
   }
-  /* .col {
-    padding: 0px;
-    padding-bottom: 0px;
-    padding-top: 12px;
-  } */
 </style>

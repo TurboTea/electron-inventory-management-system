@@ -14,6 +14,9 @@ const ProductSale = require('./models/ProductSale')
 const Sale = require('./models/Sale')
 const Purchase = require('./models/Purchase')
 const Tax = require('./models/Tax')
+const Family = require('./models/Family')
+const Unit = require('./models/Unit')
+const Company = require('./models/Company')
 
 
 // Connect to database
@@ -91,11 +94,11 @@ async function createWindow() {
       doc.costPrice = item.costPrice;
       doc.salePrice = item.salePrice;
       doc.durability = item.durability;
-      doc.qrCode = item.qrCode;
+      
       doc.alertQuantity = item.alertQuantity;
       doc.imageUrl = item.imageUrl;
       doc.expirationDate = item.expirationDate;
-     
+      doc.familyId = item.familyId;
       await doc.save();
       sendProducts()
     } catch (error) {
@@ -503,6 +506,157 @@ async function createWindow() {
     try {
       await Tax.findOneAndDelete({ _id: id })
       sendTaxes()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  //////////////////////////////////////:
+  // Load families
+  ipcMain.on('families:load', sendFamilies)
+
+  // Send families items
+  async function sendFamilies() {
+    try {
+      const families = await Family.find().sort({ created: 1 })
+      win.webContents.send('families:get', JSON.stringify(families))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Add families
+  ipcMain.on('families:add', async (e, item) => {
+    try {
+      await Family.create(item)
+      sendFamilies()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete families
+  ipcMain.on('families:delete', async (e, id) => {
+    try {
+      await Family.findOneAndDelete({ _id: id })
+      sendFamilies()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit families
+  ipcMain.on('families:edit', async (e, item) => {
+    try {
+      const doc = await Family.findById(item._id);
+      doc.name = item.name;
+      await doc.save();
+      sendFamilies()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+
+  // Load families
+  ipcMain.on('units:load', sendUnits)
+
+  // Send units items
+  async function sendUnits() {
+    try {
+      const units = await Unit.find().sort({ created: 1 })
+      win.webContents.send('units:get', JSON.stringify(units))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Add units
+  ipcMain.on('units:add', async (e, item) => {
+    try {
+      await Unit.create(item)
+      sendUnits()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete units
+  ipcMain.on('units:delete', async (e, id) => {
+    try {
+      await Unit.findOneAndDelete({ _id: id })
+      sendUnits()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit units
+  ipcMain.on('units:edit', async (e, item) => {
+    try {
+      const doc = await Unit.findById(item._id);
+      doc.name = item.name;
+      await doc.save();
+      sendFamilies()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+
+  // Load companies
+  ipcMain.on('companies:load', sendCompanies)
+
+  // Send companies
+  async function sendCompanies() {
+    try {
+      const companies = await Company.find().sort({ created: 1 })
+      win.webContents.send('company:get', JSON.stringify(companies))
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+
+  // Add companies
+  ipcMain.on('companies:add', async (e, item) => {
+    try {
+      await Company.create(item)
+      sendCompanies()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit compannies
+  ipcMain.on('companies:edit', async (e, item) => {
+    try {
+      const doc = await Company.findById(item._id);
+      doc.companyName = item.companyName;
+      doc.city = item.city;
+      doc.street = item.street;
+      doc.state = item.state;
+      doc.zip = item.zip;
+      doc.country = item.country;
+      doc.phone = item.phone;
+      doc.mobile = item.mobile;
+      doc.logo = item.logo;
+      doc.currency = item.currency;
+      doc.statisticalIdentifierNumber = item.statisticalIdentifierNumber;
+      doc.taxIdentifierNumber = item.taxIdentifierNumber;
+      doc.commercialRegisterNumber = item.commercialRegisterNumber;
+      await doc.save();
+      sendCompanies()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Delete companies
+  ipcMain.on('companies:delete', async (e, id) => {
+    try {
+      await Company.findOneAndDelete({ _id: id })
+      sendCompanies()
     } catch (error) {
       console.log(error)
     }
