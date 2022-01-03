@@ -89,6 +89,9 @@
     <template v-slot:item.date="{ item }">
       {{ formatDate(item.date) }}
     </template>
+    <template v-slot:item.totalPrice="{ item }">
+      {{ formatNumber(item.totalPrice) }}
+    </template>
     <template v-slot:top>
       <v-toolbar
         flat
@@ -291,7 +294,10 @@
         this.$router.push({ path: `/purchase/${e._id}`  });
       },
       formatDate(value) {
-        return moment(value).format("MMMM DD YYYY, h:mm:ss a")
+        return moment(value).locale('fr').format("MMMM DD YYYY, h:mm:ss a")
+      },
+      formatNumber(value) {
+        return new Intl.NumberFormat('fr', { style: 'currency', currency: 'DZD' }).format(value)
       },
       initialize () {
         ipcRenderer.send('purchases:load'),

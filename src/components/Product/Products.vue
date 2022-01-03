@@ -6,6 +6,9 @@
     sort-by="name"
     class="elevation-4"
   >
+    <!-- <template slot="headerCell" slot-scope="props">
+        {{ $t(props.header.text) }}
+    </template> -->
     <template v-slot:item.durability="{ item }">
       <v-chip
         :color="getColor(item.durability)"
@@ -14,6 +17,12 @@
         {{ item.durability }}
       </v-chip>
     </template>
+     <template v-slot:item.costPrice="{ item }">
+      {{ formatNumber(item.costPrice) }}
+    </template>
+    <template v-slot:item.salePrice="{ item }">
+      {{ formatNumber(item.salePrice) }}
+    </template>
     <!-- <template v-slot:item.imageUrl="{ item }">
         <v-img :src="item.imageUrl" style="width: 50px; height: 50px"/>
     </template> -->
@@ -21,7 +30,7 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Produits</v-toolbar-title>
+        <v-toolbar-title>{{ $t('Products') }}</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -44,6 +53,7 @@
             <v-btn
               color="next"
               dark
+              icon
               class="mb-2"
               v-bind="attrs"
               v-on="on"
@@ -69,7 +79,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Nom Produit"
+                      :label="$t('Name')"
                       outlined
                       dense
                     ></v-text-field>
@@ -81,7 +91,7 @@
                   >
                     <v-textarea
                       v-model="editedItem.designation"
-                      label="Description Produit"
+                      :label="$t('Description')"
                       outlined
                       dense
                     ></v-textarea>
@@ -95,7 +105,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.code"
-                      label="Code Produit"
+                      :label="$t('Code')"
                       outlined
                       dense
                     ></v-text-field>
@@ -116,7 +126,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.costPrice"
-                      label="Prix D'achat"
+                      :label="$t('BuyingPrice')"
                       type="number"
                       outlined
                       dense
@@ -129,7 +139,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.salePrice"
-                      label="Prix de Vente"
+                      :label="$t('SellingPrice')"
                       type="number"
                       outlined
                       dense
@@ -142,7 +152,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.alertQuantity"
-                      label="Quantité d'alerte"
+                      :label="$t('AlertQuantity')"
                       type="number"
                       outlined
                       dense
@@ -160,7 +170,7 @@
                   >
                     <v-select
                       :items="families"
-                      label="Familles"
+                      :label="$t('Families')"
                       item-value="_id"
                       item-text="name"
                       v-model="editedItem.familyId"
@@ -190,7 +200,7 @@
                   >
                     <v-select
                       :items="units"
-                      label="Unité de mesure"
+                      :label="$t('UnitOfMeasure')"
                       item-value="_id"
                       item-text="name"
                       v-model="editedItem.unitId"
@@ -199,7 +209,6 @@
                     ></v-select>
 
                     <v-btn
-                     
                       text
                       icon
                       color="next"
@@ -223,7 +232,7 @@
                   >
                     <v-checkbox
                       v-model="editedItem.durability"
-                      :label="`durabilité`"
+                      :label="$t('Durability')"
                       dense
                     ></v-checkbox>
                   </v-col>
@@ -243,7 +252,7 @@
                           :value="computedDateFormattedExpirationDate"
                           append-icon="mdi-calendar"
                           clearable
-                          label="Date d'expiration"
+                          :label="$t('ExpirationDate')"
                           readonly
                           outlined
                           dense
@@ -268,8 +277,8 @@
                     <v-file-input 
                       v-model="image" 
                       type="file" 
-                      label="Photo Produit" 
-                      hint="Ajoutez une photo de votre produit" 
+                      :label="$t('Photo')" 
+                      
                       outlined
                       dense 
                       @change="onFileChange" 
@@ -379,16 +388,16 @@
       image: undefined,
       headers: [
         {
-          text: 'Nom Produit',
+          text: 'Name',
           align: 'start',
           sortable: false,
           value: 'name',
         },
-        { text: 'Description Produit', value: 'designation' },
-        { text: 'Code Produit', value: 'code' },
-        { text: 'Prix Achat', value: 'costPrice' },
-        { text: 'Prix Vente', value: 'salePrice' },
-        { text: 'Durabilité', value: 'durability' },
+        { text: 'Description', value: 'designation' },
+        { text: 'Code', value: 'code' },
+        { text: 'BuyingPrice', value: 'costPrice' },
+        { text: 'SellingPrice', value: 'salePrice' },
+        { text: 'Durability', value: 'durability' },
         // { text: 'Photo Produit', value: 'imageUrl' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
@@ -447,6 +456,10 @@
     },
 
     methods: {
+
+      formatNumber(value) {
+        return new Intl.NumberFormat('fr', { style: 'currency', currency: 'DZD' }).format(value)
+      },
 
       getColor (valeur) {
         if (valeur == true) return 'orange'

@@ -1,7 +1,6 @@
 <template>
 <v-container fluid>
  
-
   <v-data-table
     :headers="headers"
     :items="companies"

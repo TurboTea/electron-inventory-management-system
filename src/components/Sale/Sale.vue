@@ -19,18 +19,18 @@
           <v-col>
               <div>Taxes</div>
               <p class="text-h6 text--primary">
-                {{ SaleInfo.totalTaxes }}
+                {{ formatNumber(SaleInfo.totalTaxes) }}
               </p>
               <div>Untaxed Amount</div>
               <p class="text-h6 text--primary">
-                {{ SaleInfo.totalUntaxedAmount }}
+                {{ formatNumber(SaleInfo.totalUntaxedAmount) }}
               </p>
               
             </v-col>
             <v-col>
           <div>Total:</div>
           <p class="text-h6 text--primary">
-            {{ SaleInfo.totalPrice }}
+            {{ formatNumber(SaleInfo.totalPrice) }}
           </p>
         </v-col>
       </v-row>
@@ -46,6 +46,12 @@
   >
     <template v-slot:item.date="{ item }">
       {{ formatDate(item.date) }}
+    </template>
+    <template v-slot:item.subTotal="{ item }">
+      {{ formatNumber(item.subTotal) }}
+    </template>
+    <template v-slot:item.price="{ item }">
+      {{ formatNumber(item.price) }}
     </template>
     <template v-slot:top>
       <v-toolbar
@@ -292,7 +298,11 @@
       },
 
       formatDate(value) {
-        return moment(value).format("MMMM DD YYYY, h:mm:ss a")
+        return moment(value).locale('fr').format("MMMM DD YYYY, h:mm:ss a")
+      },
+
+      formatNumber(value) {
+        return new Intl.NumberFormat('fr', { style: 'currency', currency: 'DZD' }).format(value)
       },
 
       loadProductSales() {
