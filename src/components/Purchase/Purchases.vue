@@ -5,8 +5,8 @@
           hide-actions
         >
           <v-expansion-panel-header>
-               
-                <h2>Filter</h2>
+               <v-icon style="justify-content: left;" color="next">mdi-filter</v-icon>
+                <!-- <h2>Filter</h2> -->
               
           </v-expansion-panel-header>
             
@@ -29,7 +29,7 @@
               :value="computedDateFormattedStartDate"
               append-icon="mdi-calendar"
               clearable
-              label="Date Début"
+              :label="$t('StartDate')"
               readonly
               single-line
               v-bind="attrs"
@@ -58,7 +58,7 @@
               :value="computedDateFormattedEndDate"
               append-icon="mdi-calendar"
               clearable
-              label="Date Fin"
+              :label="$t('EndDate')"
               readonly
               single-line
               v-bind="attrs"
@@ -84,8 +84,14 @@
     :search="search"
     sort-by="code"
     class="elevation-4 mt-4"
-    @click:row="routerClick($event)"
+    :footer-props="{
+        'items-per-page-text': $t('RowsPerPage'),           
+    }"
   >
+    <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
+      {{ $t(header.text) }}
+    </template>
+
     <template v-slot:item.date="{ item }">
       {{ formatDate(item.date) }}
     </template>
@@ -96,7 +102,7 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Achats</v-toolbar-title>
+        <v-toolbar-title>{{ $t('Purchases') }}</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -105,7 +111,7 @@
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            :label="$t('Search')"
             single-line
             hide-details
             class="shrink mx-4"
@@ -114,23 +120,26 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="900px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="next"
               dark
+              icon
               class="mb-2"
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              <v-icon large>
+                mdi-plus-circle
+              </v-icon>
             </v-btn>
           </template>
           
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="text-h5">{{ $t(formTitle) }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -143,7 +152,7 @@
                   >
                     <v-select
                       :items="vendors"
-                      label="vendors"
+                      :label="$t('Suppliers')"
                       item-value="_id"
                       item-text="raison"
                       v-model="editedItem.vendor"
@@ -158,29 +167,27 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="next"
-                text
+                color="error"
                 @click="close"
               >
-                Cancel
+                {{ $t('Cancel') }}
               </v-btn>
               <v-btn
-                color="next"
-                text
+                color="success"
                 @click="save"
               >
-                Save
+                {{ $t('Save') }}
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5 justify-center">{{ $t('AreYouSureYouWantToDeleteThisItem') }}</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="next" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="next" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn dark color="red" @click="closeDelete">{{ $t('Cancel') }}</v-btn>
+              <v-btn dark color="success" @click="deleteItemConfirm">{{ $t('OK') }}</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -191,18 +198,19 @@
        <v-icon
         small
         class="mr-2"
-        color="next"
+        color="success"
+        @click="routerClick(item)"
       >
         mdi-eye
       </v-icon> 
-      <v-icon
+      <!-- <v-icon
         small
         class="mr-2"
         color="next"
         @click="editItem(item)"
       >
         mdi-pencil
-      </v-icon>
+      </v-icon> -->
       <v-icon
         small
         color="red"
@@ -217,7 +225,9 @@
         dark
         @click="initialize"
       >
-        Reset
+        <v-icon>
+          mdi-reload
+        </v-icon>
       </v-btn>
     </template>
   </v-data-table>
@@ -245,9 +255,9 @@
           value: 'code',
         },
         { text: 'Date', value: "date" },
-        { text: 'vendor', value: "vendorId.raison" },
+        { text: 'Suppliers', value: "vendorId.raison" },
         { text: 'Total', value: 'totalPrice' },
-        // { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false },
       ],
       purchases: [],
       vendors: [],
@@ -266,13 +276,13 @@
 
     computed: {
       computedDateFormattedStartDate () {
-        return this.date_start ? moment(this.date_start).format('dddd, MMMM Do YYYY') : ''
+        return this.date_start ? moment(this.date_start).locale(this.$i18n.locale).format('dddd, MMMM Do YYYY') : ''
       },
       computedDateFormattedEndDate () {
-        return this.date_end ? moment(this.date_end).format('dddd, MMMM Do YYYY') : ''
+        return this.date_end ? moment(this.date_end).locale(this.$i18n.locale).format('dddd, MMMM Do YYYY') : ''
       },
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New' : 'Edit'
       },
     },
 
@@ -294,10 +304,10 @@
         this.$router.push({ path: `/purchase/${e._id}`  });
       },
       formatDate(value) {
-        return moment(value).locale('fr').format("MMMM DD YYYY, h:mm:ss a")
+        return moment(value).locale(this.$i18n.locale).format("MMMM DD YYYY, h:mm:ss a")
       },
       formatNumber(value) {
-        return new Intl.NumberFormat('fr', { style: 'currency', currency: 'DZD' }).format(value)
+        return new Intl.NumberFormat(this.$i18n.locale, { style: 'currency', currency: 'DZD' }).format(value)
       },
       initialize () {
         ipcRenderer.send('purchases:load'),
@@ -363,3 +373,13 @@
   }
 </script>
 
+<style scoped>
+  .v-card__title {
+    background-color: #00366f;
+    color: white;
+  }
+  .v-card__actions {
+    background-color: #00366f;
+  }
+ 
+</style>

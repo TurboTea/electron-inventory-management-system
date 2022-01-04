@@ -5,10 +5,15 @@
     :search="search"
     sort-by="name"
     class="elevation-4"
+    :footer-props="{
+        'items-per-page-text': $t('RowsPerPage'),           
+    }"
   >
-    <!-- <template slot="headerCell" slot-scope="props">
-        {{ $t(props.header.text) }}
-    </template> -->
+   
+    <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
+      {{ $t(header.text) }}
+    </template>
+
     <template v-slot:item.durability="{ item }">
       <v-chip
         :color="getColor(item.durability)"
@@ -17,9 +22,11 @@
         {{ item.durability }}
       </v-chip>
     </template>
-     <template v-slot:item.costPrice="{ item }">
+
+    <template v-slot:item.costPrice="{ item }">
       {{ formatNumber(item.costPrice) }}
     </template>
+
     <template v-slot:item.salePrice="{ item }">
       {{ formatNumber(item.salePrice) }}
     </template>
@@ -39,7 +46,7 @@
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Recherche"
+            :label="$t('Search')"
             single-line
             hide-details
             class="shrink mx-4"
@@ -59,14 +66,14 @@
               v-on="on"
               @click="generateCode"
             >
-              <v-icon>
+              <v-icon large>
                 mdi-plus-circle
               </v-icon>
             </v-btn>
           </template>
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="text-h5">{{ $t(formTitle) }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -307,24 +314,24 @@
                 color="error"
                 @click="close"
               >
-                Annuler
+                {{ $t('Cancel') }}
               </v-btn>
               <v-btn
                 color="success"
                 @click="save"
               >
-                Sauvegarder
+                {{ $t('Save') }}
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5 justify-center">{{ $t('AreYouSureYouWantToDeleteThisItem') }}</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="next" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="next" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn dark color="red" @click="closeDelete">{{ $t('Cancel') }}</v-btn>
+              <v-btn dark color="success" @click="deleteItemConfirm">{{ $t('OK') }}</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -438,7 +445,7 @@
         return this.editedItem.expirationDate ? moment(this.editedItem.expirationDate).format('dddd, MMMM Do YYYY, h:mm:ss a') : ''
       },
       formTitle () {
-        return this.editedIndex === -1 ? 'Nouveau Produit' : 'Modifier Produit'
+        return this.editedIndex === -1 ? 'New' : 'Edit'
       },
     },
 

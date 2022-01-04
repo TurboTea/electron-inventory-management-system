@@ -10,16 +10,16 @@
           hover
           class="card"
           :to="item.to"
-          :disabled="item.title === 'Accueil'"
+          :disabled="item.title === 'Home'"
         >
-        <v-icon>{{ item.icon }}</v-icon>
-          <!-- <v-img
+        <!-- <v-icon>{{ item.icon }}</v-icon> -->
+          <v-img
             contain
-            width="50%"
-            class="center"
+            width="100%"
+            
             :src="item.img"
           >
-          </v-img> -->
+          </v-img>
           <v-card-title>{{ $t(item.title) }}</v-card-title>
         </v-card>    
       </v-col>
@@ -31,30 +31,32 @@
   export default {
     data: () => ({ 
       items: [
-          // { title: 'Home', img: require('../assets/icons/home.png'), to: '/' },
-          // { title: 'Dashboard', img: require('../assets/icons/dashboard.png'), to: '/dashboard' },
-          // { title: 'Statistiques', img: require('../assets/icons/statistics.png'), to: '/dashboard' },
-          // { title: 'Factures', img: require('../assets/icons/file.png'), to: '/dashboard' },
-          // { title: 'Produits', img: require('../assets/icons/packaging.png'), to: '/product' },
-          // { title: 'Clients', img: require('../assets/icons/customer-support.png'), to: '/customer' },
-          // { title: 'Fournisseurs', img: require('../assets/icons/supplier.png'), to: '/vendor' },
-          // { title: 'Ventes', img: require('../assets/icons/point-of-sale.png'), to: '/sales' },
-          // { title: 'Achats', img: require('../assets/icons/shopping-bag.png'), to: '/purchases' },
-          // { title: 'Stock', img: require('../assets/icons/warehouse.png'), to: '/stock' },
-          // { title: 'Paramètres', img: require('../assets/icons/settings.png'), to: '/setting' },
-          // { title: 'À propos', img: require('../assets/icons/information.png'), to: '/about' }
-          { title: 'Home', icon: 'mdi-home', to: '/' },
-          { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
-          { title: 'Products', icon: 'mdi-basket', to: '/products' },
-          { title: 'Sales', icon: 'mdi-cash-register', to: '/sales' },
-          { title: 'Purchases', icon: 'mdi-cart-variant', to: '/purchases' },
-          { title: 'Clients', icon: 'mdi-account-group-outline', to: '/customer' },
-          { title: 'Suppliers', icon: 'mdi-account-group', to: '/vendor' },
-          { title: 'Invoices', icon: 'mdi-receipt', to: '/invoice' },
-          { title: 'Statistics', icon: 'mdi-finance', to: '/statistics' },
-          { title: 'Stock', icon: 'mdi-warehouse', to: '/stock' },
-          { title: 'Settings', icon: 'mdi-cog', to: '/setting' },
-          { title: 'About', icon: 'mdi-information', to: '/about' }
+          { title: 'Home', img: require('../assets/icons/couleur/home.png'), to: '/' },
+          { title: 'Dashboard', img: require('../assets/icons/couleur/dashboard.png'), to: '/dashboard' },
+          { title: 'Products', img: require('../assets/icons/couleur/packaging.png'), to: '/products' },
+          { title: 'Sales', img: require('../assets/icons/couleur/point_of_sale.png'), to: '/sales' },
+          { title: 'Purchases', img: require('../assets/icons/couleur/packaging.png'), to: '/purchases' },
+          { title: 'Clients', img: require('../assets/icons/couleur/customer-support.png'), to: '/customer' },
+          { title: 'Suppliers', img: require('../assets/icons/couleur/supplier.png'), to: '/vendor' },
+          { title: 'Invoices', img: require('../assets/icons/couleur/file.png'), to: '/invoice' },
+          { title: 'Statistics', img: require('../assets/icons/couleur/statistics.png'), to: '/statistics' },
+          { title: 'Stock', img: require('../assets/icons/couleur/warehouse.png'), to: '/stock' },
+          { title: 'Settings', img: require('../assets/icons/couleur/settings.png'), to: '/setting' },
+          { title: 'About', img: require('../assets/icons/couleur/information.png'), to: '/about' }
+
+          // { title: 'Home', img: require('../assets/icons/simple/home_blue.png'), to: '/' },
+          // { title: 'Dashboard', img: require('../assets/icons/simple/dashboard_blue.png'), to: '/dashboard' },
+          // { title: 'Products', img: require('../assets/icons/simple/boxes_blue.png'), to: '/products' },
+          // { title: 'Sales', img: require('../assets/icons/simple/sale_blue.png'), to: '/sales' },
+          // { title: 'Purchases', img: require('../assets/icons/simple/purchase_blue.png'), to: '/purchases' },
+          // { title: 'Clients', img: require('../assets/icons/simple/users_blue.png'), to: '/customer' },
+          // { title: 'Suppliers', img: require('../assets/icons/simple/users_blue.png'), to: '/vendor' },
+          // { title: 'Invoices', img: require('../assets/icons/simple/file_blue.png'), to: '/invoice' },
+          // { title: 'Statistics', img: require('../assets/icons/simple/statistics_blue.png'), to: '/statistics' },
+          // { title: 'Stock', img: require('../assets/icons/simple/warehouse_blue.png'), to: '/stock' },
+          // { title: 'Settings', img: require('../assets/icons/simple/cogs_blue.png'), to: '/setting' },
+          // { title: 'About', img: require('../assets/icons/simple/info_blue.png'), to: '/about' }
+          
         ],
       }),
   }
@@ -62,16 +64,12 @@
 
 <style scoped>
   .container {
-    padding: 105px;
+    padding-top: 10px;
   }
 
   .col {
     padding: 0px;
-    max-width: 300px;
-  }
-
-  .center {
-    margin: auto;  
+    max-width: 250px;
   }
 
   .card {

@@ -72,8 +72,8 @@ export default {
     padding: 6px 0;
     text-transform: uppercase;
     font-size: 10px;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     color: #888888;
     & > * {
       line-height: initial;

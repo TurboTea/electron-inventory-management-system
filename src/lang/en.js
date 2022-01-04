@@ -1,4 +1,5 @@
 export default {
+    CompanyName: 'Next Challenge',
     Home: 'Home',
     Dashboard: 'Dashboard',
     Products: 'Products',
@@ -24,6 +25,30 @@ export default {
     UnitOfMeasure: 'Unit of measure',
     ExpirationDate: 'Expiration date',
     Photo: 'Photo',
+    Search: 'Search',
+    RowsPerPage: 'Rows per page :',
+    New: 'New',
+    Edit: 'Edit',
+    Cancel: 'Cancel',
+    Save: 'Save',
+    OK: 'OK',
+    AreYouSureYouWantToDeleteThisItem: 'Are you sure you want to delete this item ?',
+    //sales
+    Sales: 'Sales',
+    Filter: 'Filter',
+    Date: 'Date',
+    Total: 'Total',
+    StartDate: 'Start Date',
+    EndDate: 'End Date',
+    Customer: 'Client',
+    SaleDate: 'Sale Date',
+    Taxes: 'Taxes',
+    UntaxedAmount: 'Untaxed Amount',
+    Quantity: 'Quantity',
+    Price: 'Price',
+    UnitPrice: 'Unit Price',
+    SubTotal: 'Sub Total',
+
 
 
 

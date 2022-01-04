@@ -19,11 +19,9 @@
         <v-list-item-content>
         
           <v-list-item-title class="text-h6">
-            Eurl Next
+            {{ $t('CompanyName')}} 
           </v-list-item-title>
-          <v-list-item-subtitle>
-            challenge
-          </v-list-item-subtitle>
+          
         </v-list-item-content>
       </v-list-item>
 
@@ -63,7 +61,7 @@
         @click="drawer = !drawer"
       ></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Application</v-toolbar-title>
+      <!-- <v-toolbar-title>Application</v-toolbar-title> -->
 
       <v-spacer></v-spacer>
           <!-- <v-menu offset-y>

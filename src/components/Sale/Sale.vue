@@ -7,28 +7,28 @@
     <v-card-text>
       <v-row>
         <v-col>
-          <div>Customer:</div>
+          <div>{{ $t('Customer') }}</div>
           <p class="text-h6 text--primary">
             {{ CustomerInfo.raison }}
           </p>
-          <div>Sale date:</div>
+          <div>{{ $t('SaleDate') }}</div>
           <p class="text-h6 text--primary">
             {{ formatDate(SaleInfo.date) }}
           </p>
             </v-col>
           <v-col>
-              <div>Taxes</div>
+              <div>{{ $t('Taxes') }}</div>
               <p class="text-h6 text--primary">
                 {{ formatNumber(SaleInfo.totalTaxes) }}
               </p>
-              <div>Untaxed Amount</div>
+              <div>{{ $t('UntaxedAmount') }}</div>
               <p class="text-h6 text--primary">
                 {{ formatNumber(SaleInfo.totalUntaxedAmount) }}
               </p>
               
             </v-col>
             <v-col>
-          <div>Total:</div>
+          <div>{{ $t('Total') }}</div>
           <p class="text-h6 text--primary">
             {{ formatNumber(SaleInfo.totalPrice) }}
           </p>
@@ -43,16 +43,26 @@
     :search="search"
     sort-by="code"
     class="elevation-4 mt-4"
+    :footer-props="{
+        'items-per-page-text': $t('RowsPerPage'),           
+    }"
   >
+    <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
+      {{ $t(header.text) }}
+    </template>
+
     <template v-slot:item.date="{ item }">
       {{ formatDate(item.date) }}
     </template>
+
     <template v-slot:item.subTotal="{ item }">
       {{ formatNumber(item.subTotal) }}
     </template>
+
     <template v-slot:item.price="{ item }">
       {{ formatNumber(item.price) }}
     </template>
+
     <template v-slot:top>
       <v-toolbar
         flat
@@ -66,7 +76,7 @@
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            :label="$t('Search')"
             single-line
             hide-details
             class="shrink mx-4"
@@ -81,11 +91,12 @@
             <v-btn
               color="success"
               dark
+              icon
               class="mb-2"
               v-bind="attrs"
               v-on="on"
             >
-              <v-icon>
+              <v-icon large>
                 mdi-plus-circle
               </v-icon>
             </v-btn>
@@ -93,7 +104,7 @@
           
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="text-h5">{{ $t(formTitle) }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -106,7 +117,7 @@
                   >
                     <v-select
                       :items="products"
-                      label="Products"
+                      :label="$t('Products')"
                       item-value="_id"
                       item-text="name"
                       v-model="editedItem.productId"
@@ -120,7 +131,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.amount"
-                      label="Amount"
+                      :label="$t('Quantity')"
                     ></v-text-field>
                   </v-col>
 
@@ -131,7 +142,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.price"
-                      label="Price"
+                      :label="$t('Price')"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -141,7 +152,7 @@
                   >
                    <v-select
                       :items="taxes"
-                      label="Taxes"
+                      :label="$t('Taxes')"
                       item-value="_id"
                       item-text="name"
                       v-model="editedItem.taxId"
@@ -156,29 +167,27 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="red"
-                text
+                color="error"
                 @click="close"
               >
-                Cancel
+                {{ $t('Cancel') }}
               </v-btn>
               <v-btn
-                color="primary"
-                text
+                color="success"
                 @click="save"
               >
-                Save
+                {{ $t('Save') }}
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5 justify-center">{{ $t('AreYouSureYouWantToDeleteThisItem') }}</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="next" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="next" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn dark color="red" @click="closeDelete">{{ $t('Cancel') }}</v-btn>
+              <v-btn dark color="success" @click="deleteItemConfirm">{{ $t('OK') }}</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -229,16 +238,16 @@
       dialogDelete: false,
       headers: [
         {
-          text: 'Product',
+          text: 'Products',
           align: 'start',
           sortable: false,
           value: 'productId.name',
         },
         { text: 'Description', value: "productId.designation" },
         { text: 'Quantity', value: "amount" },
-        { text: 'Unit Price', value: 'price' },
-        { text: 'Tax', value: 'taxId.name' },
-        { text: 'Sub Total', value: 'subTotal' },
+        { text: 'UnitPrice', value: 'price' },
+        { text: 'Taxes', value: 'taxId.name' },
+        { text: 'SubTotal', value: 'subTotal' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       productSales: [],
@@ -274,7 +283,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New' : 'Edit'
       },
     },
 
@@ -298,11 +307,11 @@
       },
 
       formatDate(value) {
-        return moment(value).locale('fr').format("MMMM DD YYYY, h:mm:ss a")
+        return moment(value).locale(this.$i18n.locale).format("MMMM DD YYYY, h:mm:ss a")
       },
 
       formatNumber(value) {
-        return new Intl.NumberFormat('fr', { style: 'currency', currency: 'DZD' }).format(value)
+        return new Intl.NumberFormat(this.$i18n.locale, { style: 'currency', currency: 'DZD' }).format(value)
       },
 
       loadProductSales() {
@@ -511,3 +520,13 @@
   }
 </script>
 
+<style scoped>
+  .v-card__title {
+    background-color: #00366f;
+    color: white;
+  }
+  .v-card__actions {
+    background-color: #00366f;
+  }
+ 
+</style>
