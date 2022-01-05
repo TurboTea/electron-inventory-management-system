@@ -48,7 +48,15 @@ export default {
     Price: 'السعر',
     UnitPrice: 'سعر الوحدة',
     SubTotal: 'المجموع الفرعي',
-
+    Vendor: 'البائع',
+    PurchaseDate: 'تاريخ الشراء',
+    //customer
+    RaisonSocial: 'الاسم الاجتماعي',
+    Phone: 'الهاتف',
+    //tax
+    TaxName: 'اسم الضريبة',
+    TaxType: 'نوع الضريبة',
+    TaxValue: 'قيمة الضريبة',
 
 
     appname: 'App Name',

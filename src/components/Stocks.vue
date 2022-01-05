@@ -3,14 +3,22 @@
     :headers="headers"
     :items="stocks"
     :search="search"
-    sort-by="name"
-    class="elevation-1"
+    sort-by="productId.name"
+    class="elevation-4"
+    :footer-props="{
+        'items-per-page-text': $t('RowsPerPage'),           
+    }"
   >
+
+    <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
+      {{ $t(header.text) }}
+    </template>
+
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Stock</v-toolbar-title>
+        <v-toolbar-title>{{ $t('Stock') }}</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -19,7 +27,7 @@
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            :label="$t('Search')"
             single-line
             hide-details
             class="shrink mx-4"
@@ -27,22 +35,25 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="700px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="next"
               dark
+              icon
               class="mb-2"
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              <v-icon large>
+                mdi-plus-circle
+              </v-icon>
             </v-btn>
           </template>
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="text-h5">{{ $t(formTitle) }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -55,7 +66,7 @@
                   >
                     <v-select
                       :items="products"
-                      label="Products"
+                      :label="$t('Products')"
                       item-value="_id"
                       item-text="name"
                       v-model="editedItem.productId"
@@ -69,7 +80,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.amount"
-                      label="Amount"
+                      :label="$t('Quantity')"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -79,29 +90,27 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="next"
-                text
+                color="error"
                 @click="close"
               >
-                Cancel
+                {{ $t('Cancel') }}
               </v-btn>
               <v-btn
-                color="next"
-                text
+                color="success"
                 @click="save"
               >
-                Save
+                {{ $t('Save') }}
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5 justify-center">{{ $t('AreYouSureYouWantToDeleteThisItem') }}</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="next" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="next" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn dark color="red" @click="closeDelete">{{ $t('Cancel') }}</v-btn>
+              <v-btn dark color="success" @click="deleteItemConfirm">{{ $t('OK') }}</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -155,7 +164,7 @@
         { text: 'Description', value: 'productId.designation' },
         { text: 'Code', value: 'productId.code' },
         { text: 'Price', value: 'productId.price' },
-        { text: 'amount', value: 'amount' },
+        { text: 'Quantity', value: 'amount' },
         // { text: 'Actions', value: 'actions', sortable: false },
       ],
       stocks: [],
@@ -173,7 +182,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New' : 'Edit'
       },
     },
 
@@ -249,3 +258,14 @@
     },
   }
 </script>
+
+<style scoped>
+  .v-card__title {
+    background-color: #00366f;
+    color: white;
+  }
+  .v-card__actions {
+    background-color: #00366f;
+  }
+ 
+</style>

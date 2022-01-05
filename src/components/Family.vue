@@ -3,40 +3,59 @@
   <v-data-table
     :headers="headers"
     :items="families"
+    :search="search"
     sort-by="name"
-    class="elevation-1"
+    class="elevation-4"
+    :footer-props="{
+        'items-per-page-text': $t('RowsPerPage'),           
+    }"
   >
+
+    <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
+      {{ $t(header.text) }}
+    </template>
+
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Family</v-toolbar-title>
+        <v-toolbar-title>{{ $t('Families') }}</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
           vertical
         ></v-divider>
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            :label="$t('Search')"
+            single-line
+            hide-details
+            class="shrink mx-4"
+        ></v-text-field>
+
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="700px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="next"
               dark
+              icon
               class="mb-2"
               v-bind="attrs"
               v-on="on"
             >
-              <v-icon>
+              <v-icon large>
                 mdi-plus-circle
               </v-icon>
             </v-btn>
           </template>
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="text-h5">{{ $t(formTitle) }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -49,7 +68,7 @@
                   >
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Family Name"
+                      :label="$t('Name')"
                     ></v-text-field>
                   </v-col>
                    
@@ -60,29 +79,27 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="blue darken-1"
-                text
+                color="error"
                 @click="close"
               >
-                Cancel
+                {{ $t('Cancel') }}
               </v-btn>
               <v-btn
-                color="blue darken-1"
-                text
+                color="success"
                 @click="save"
               >
-                Save
+                {{ $t('Save') }}
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="700px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5 justify-center">{{ $t('AreYouSureYouWantToDeleteThisItem') }}</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn dark color="red" @click="closeDelete">{{ $t('Cancel') }}</v-btn>
+              <v-btn dark color="success" @click="deleteItemConfirm">{{ $t('OK') }}</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -93,7 +110,7 @@
       <v-icon
         small
         class="mr-2"
-        color="next"
+        color="primary"
         @click="editItem(item)"
       >
         mdi-pencil
@@ -128,6 +145,7 @@ import {ipcRenderer} from "electron";
     data: () => ({
       dialog: false,
       dialogDelete: false,
+      search: '',
       headers: [
         {
           text: 'Name',
@@ -149,7 +167,7 @@ import {ipcRenderer} from "electron";
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New' : 'Edit'
       },
     },
 
@@ -217,3 +235,14 @@ import {ipcRenderer} from "electron";
     },
   }
 </script>
+
+<style scoped>
+  .v-card__title {
+    background-color: #00366f;
+    color: white;
+  }
+  .v-card__actions {
+    background-color: #00366f;
+  }
+ 
+</style>

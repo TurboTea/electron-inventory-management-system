@@ -48,6 +48,15 @@ export default {
     Price: 'Price',
     UnitPrice: 'Unit Price',
     SubTotal: 'Sub Total',
+    Vendor: 'Vendor',
+    PurchaseDate: 'Purchase Date',
+    //customer
+    RaisonSocial: 'Raison Social',
+    Phone: 'Phone',
+    //tax
+    TaxName: 'Tax Name',
+    TaxType: 'Tax Type',
+    TaxValue: 'Tax Value',
 
 
 
