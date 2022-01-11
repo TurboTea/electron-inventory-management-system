@@ -10,7 +10,7 @@
         <v-list-item v-for="(lang, i) in langs" :key="i" @click="changeLang(lang, i)">
           <v-list-item-content>
             <v-img :src="require(`../assets/flags/${langs[i]}.png`)" :alt="lang" />
-            <!-- <span>{{ lang }}</span> -->
+            <span>{{ lang }}</span>
           </v-list-item-content>
         </v-list-item>
       </v-list>

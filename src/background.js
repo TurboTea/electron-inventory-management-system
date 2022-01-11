@@ -162,6 +162,39 @@ async function createWindow() {
     }
   })
 
+  // Delete customers
+  ipcMain.on('customers:delete', async (e, id) => {
+    try {
+      await Customer.findOneAndDelete({ _id: id })
+      sendCustomers()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  // Edit customers
+  ipcMain.on('customers:edit', async (e, item) => {
+    try {
+      const doc = await Customer.findById(item._id);
+      doc.raison = item.raison;
+      doc.city = item.city;
+      doc.street = item.street;
+      doc.state = item.state;
+      doc.zip = item.zip;
+      doc.country = item.country;
+      
+      doc.phone = item.phone;
+      doc.mobile = item.mobile;
+      doc.statisticalIdentifierNumber = item.statisticalIdentifierNumber;
+      doc.taxIdentifierNumber = item.taxIdentifierNumber;
+      doc.commercialRegisterNumber = item.commercialRegisterNumber;
+      await doc.save();
+      sendCustomers()
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
   // Load stock
   ipcMain.on('stocks:load', sendStocks)
 
@@ -222,6 +255,7 @@ async function createWindow() {
 
   // Edit Sale Total Price
   ipcMain.on('saleTotals:edit', async (e, item) => {
+    console.log('item', item)
     try {
       const doc = await Sale.findOne({ _id: item._id });
       doc.totalPrice = item.totalPrice;
@@ -281,6 +315,7 @@ async function createWindow() {
       doc.productId = item.productId;
       doc.price = item.price;
       doc.amount = item.amount;
+      doc.taxId = item.taxId;
       doc.untaxedAmount = item.untaxedAmount
       doc.subTotal = item.subTotal;
       await doc.save();
@@ -610,23 +645,52 @@ async function createWindow() {
   // Send companies
   async function sendCompanies() {
     try {
-      const companies = await Company.find().sort({ created: 1 })
+      const companies = await Company.find()
       win.webContents.send('company:get', JSON.stringify(companies))
     } catch (err) {
       console.log(err)
     }
   }
 
-
   // Add companies
-  ipcMain.on('companies:add', async (e, item) => {
+  // ipcMain.on('companies:add', async (e, item) => {
+  //   try {
+  //     await Company.create(item)
+  //     sendCompanies()
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // })
+
+  async function createCompany() {
     try {
-      await Company.create(item)
-      sendCompanies()
+      const docCount = await Company.countDocuments({}).exec();
+     
+      if ( docCount == 0) {
+        await Company.create({
+        companyName: '',
+        city: '',
+        street: '',
+        state: '',
+        zip: '',
+        country: '',
+        phone: '',
+        mobile: '',
+        logo: '',
+        //currency: '',
+        statisticalIdentifierNumber: '',
+        taxIdentifierNumber: '',
+        commercialRegisterNumber: ''
+        })
+      }
+
     } catch (error) {
       console.log(error)
     }
-  })
+  }
+
+  createCompany();
+
 
   // Edit compannies
   ipcMain.on('companies:edit', async (e, item) => {
@@ -641,7 +705,7 @@ async function createWindow() {
       doc.phone = item.phone;
       doc.mobile = item.mobile;
       doc.logo = item.logo;
-      doc.currency = item.currency;
+      //doc.currency = item.currency;
       doc.statisticalIdentifierNumber = item.statisticalIdentifierNumber;
       doc.taxIdentifierNumber = item.taxIdentifierNumber;
       doc.commercialRegisterNumber = item.commercialRegisterNumber;
@@ -653,14 +717,14 @@ async function createWindow() {
   })
 
   // Delete companies
-  ipcMain.on('companies:delete', async (e, id) => {
-    try {
-      await Company.findOneAndDelete({ _id: id })
-      sendCompanies()
-    } catch (error) {
-      console.log(error)
-    }
-  })
+  // ipcMain.on('companies:delete', async (e, id) => {
+  //   try {
+  //     await Company.findOneAndDelete({ _id: id })
+  //     sendCompanies()
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // })
  
 }
 

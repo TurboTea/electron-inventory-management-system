@@ -10,6 +10,10 @@
         'items-per-page-text': $t('RowsPerPage'),           
     }"
   >
+    <template v-slot:footer.page-text="items"> 
+      {{ items.pageStart }} - {{ items.pageStop }} {{ $t('Of') }} {{ items.itemsLength }} 
+    </template>
+    
     <template v-slot:top>
       <v-toolbar
         flat
@@ -25,7 +29,7 @@
           v-model="dialog"
           max-width="900px"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <!-- <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="next"
               dark
@@ -37,7 +41,7 @@
                 mdi-plus-circle
               </v-icon>
             </v-btn>
-          </template>
+          </template> -->
           <v-card>
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
@@ -52,7 +56,7 @@
                         md="4"
                     >
                         <v-text-field
-                        v-model="editedItem.companiesName"
+                        v-model="editedItem.companyName"
                         label="Raison Social"
                         outlined
                         dense
@@ -130,7 +134,7 @@
                         dense
                         ></v-text-field>
                     </v-col> 
-                    <v-col
+                    <!-- <v-col
                         cols="12"
                         sm="6"
                         md="4"
@@ -141,7 +145,7 @@
                         outlined
                         dense
                         ></v-text-field>
-                    </v-col> 
+                    </v-col>  -->
                     <v-col
                         cols="12"
                         sm="6"
@@ -177,9 +181,39 @@
                         outlined
                         dense
                         ></v-text-field>
-                    </v-col> 
-                        
+                    </v-col>
                 </v-row>
+                    <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                    >
+                    <v-file-input 
+                      v-model="image" 
+                      type="file" 
+                      :label="$t('Photo')" 
+                      
+                      outlined
+                      dense 
+                      @change="onFileChange" 
+                    />
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="8"
+                    >
+                    <v-img 
+                    :src="editedItem.logo"
+                    contain
+                    width="100%"
+                    style="border: 1px dashed #ccc; min-height: 530px" 
+                    />
+                  </v-col>
+                  </v-row> 
+                        
+                
               </v-container>
             </v-card-text>
 
@@ -222,13 +256,13 @@
       >
         mdi-pencil
       </v-icon>
-      <v-icon
+      <!-- <v-icon
         small
         color="red"
         @click="deleteItem(item)"
       >
         mdi-delete
-      </v-icon>
+      </v-icon> -->
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -252,19 +286,23 @@ import {ipcRenderer} from "electron";
     data: () => ({
       dialog: false,
       dialogDelete: false,
+      image: undefined,
       headers: [
         {
           text: 'Name',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'companyName',
         },
+        { text: 'NIS', value: 'statisticalIdentifierNumber'},
+        { text: 'NIF', value: 'taxIdentifierNumber'},
+        { text: 'RC', value: 'commercialRegisterNumber'},
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       companies: [],
       editedIndex: -1,
       editedItem: {
-        companiesName: '',
+        companyName: '',
         city: '',
         street: '',
         state: '',
@@ -273,7 +311,7 @@ import {ipcRenderer} from "electron";
         phone: '',
         mobile: '',
         logo: '',
-        currency: '',
+        // currency: '',
         statisticalIdentifierNumber: '',
         taxIdentifierNumber: '',
         commercialRegisterNumber: ''
@@ -288,7 +326,7 @@ import {ipcRenderer} from "electron";
         phone: '',
         mobile: '',
         logo: '',
-        currency: '',
+        // currency: '',
         statisticalIdentifierNumber: '',
         taxIdentifierNumber: '',
         commercialRegisterNumber: ''
@@ -297,7 +335,7 @@ import {ipcRenderer} from "electron";
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New' : 'Edit'
       },
     },
 
@@ -315,11 +353,25 @@ import {ipcRenderer} from "electron";
     },
 
     methods: {
+      createImage(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.editedItem.logo = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        },
+        onFileChange(file) {
+          if (!file) {
+            return;
+          }
+          this.createImage(file);
+      },
+
       initialize () {
           ipcRenderer.send('companies:load'),
-          ipcRenderer.on('companies:get', (e, companies) => {
+          ipcRenderer.on('company:get', (e, companies) => {
           this.companies = JSON.parse(companies)
-          console.log('companies', this.companies)
+          
         })
       },
 

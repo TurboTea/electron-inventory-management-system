@@ -9,6 +9,10 @@
         'items-per-page-text': $t('RowsPerPage'),           
     }"
   >
+    <template v-slot:footer.page-text="items"> 
+      {{ items.pageStart }} - {{ items.pageStop }} {{ $t('Of') }} {{ items.itemsLength }} 
+    </template>
+    
     <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
       {{ $t(header.text) }}
     </template>
@@ -77,6 +81,86 @@
                     <v-text-field
                       v-model="editedItem.phone"
                       :label="$t('Phone')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.mobile"
+                      :label="$t('Mobile')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.city"
+                      :label="$t('City')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.country"
+                      :label="$t('Country')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.street"
+                      :label="$t('Street')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.zip"
+                      :label="$t('Zip')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.taxIdentifierNumber"
+                      :label="$t('NIF')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.statisticalIdentifierNumber"
+                      :label="$t('NIS')"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.commercialRegisterNumber"
+                      :label="$t('RC')"
                     ></v-text-field>
                   </v-col>
                   <!--<v-col
@@ -190,18 +274,45 @@
           value: 'raison',
         },
         { text: 'Phone', value: 'phone' },
-        // { text: 'Created', value: 'created' },
+        { text: 'mobile', value: 'mobile' },
+        { text: 'City', value: 'city' },
+        { text: 'street', value: 'street' },
+        { text: 'state', value: 'state' },
+        { text: 'zip', value: 'zip' },
+        { text: 'country', value: 'country' },
+        { text: 'NIS', value: 'statisticalIdentifierNumber' },
+        { text: 'NIF', value: 'taxIdentifierNumber' },
+        { text: 'RC', value: 'commercialRegisterNumber' },
+
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       customers: [],
       editedIndex: -1,
       editedItem: {
         raison: '',
+        city: '',
+        street: '',
+        state: '',
+        zip: '',
+        country: '',
         phone: '',
+        mobile: '',
+        statisticalIdentifierNumber: '',
+        taxIdentifierNumber: '',
+        commercialRegisterNumber: '',
       },
       defaultItem: {
         raison: '',
+        city: '',
+        street: '',
+        state: '',
+        zip: '',
+        country: '',
         phone: '',
+        mobile: '',
+        statisticalIdentifierNumber: '',
+        taxIdentifierNumber: '',
+        commercialRegisterNumber: ''
       },
     }),
 
@@ -266,20 +377,15 @@
       },
 
       save () {
-        let item = {
-          raison: this.editedItem.raison,
-          phone: this.editedItem.phone,
-          
-        }
         //console.log('item',item)
-        ipcRenderer.send('customers:add', item),
+        
         this.close()
-        /*if (this.editedIndex > -1) {
-          Object.assign(this.customers[this.editedIndex], this.editedItem)
+        if (this.editedIndex > -1) {
+          ipcRenderer.send('customers:edit', this.editedItem)
         } else {
-          this.customers.push(this.editedItem)
+          ipcRenderer.send('customers:add', this.editedItem)
         }
-        this.close()*/
+        this.close()
       },
     },
   }

@@ -57,6 +57,11 @@ export default {
     TaxName: 'Nom de la taxe',
     TaxType: 'Type de Taxe',
     TaxValue: 'Valeur fiscale',
+    //data-table
+    Of: 'de',
+
+    //
+    SaleOrder: 'Bon de livraison',
 
 
 

@@ -85,15 +85,19 @@
     }"
     
   >
+    <template v-slot:[`footer.page-text`]="items"> 
+      {{ items.pageStart }} - {{ items.pageStop }} {{ $t('Of') }} {{ items.itemsLength }} 
+    </template>
+    
     <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
       {{ $t(header.text) }}
     </template>
 
-    <template v-slot:item.date="{ item }">
+    <template v-slot:[`item.date`]="{ item }">
       {{ formatDate(item.date) }}
     </template>
     
-    <template v-slot:item.totalPrice="{ item }">
+    <template v-slot:[`item.totalPrice`]="{ item }">
       {{ formatNumber(item.totalPrice) }}
     </template>
     

@@ -26,7 +26,7 @@ export default {
     ExpirationDate: 'تاريخ انتهاء الصلاحية',
     Photo: 'صورة فوتوغرافية',
     Search: 'بحث',
-    RowsPerPage: 'عدد الصفوف في الصفحة',
+    RowsPerPage: 'عدد الصفوف في الصفحة :',
     New: 'جديد',
     Edit: 'تعديل',
     Cancel: 'الغاء',
@@ -57,6 +57,11 @@ export default {
     TaxName: 'اسم الضريبة',
     TaxType: 'نوع الضريبة',
     TaxValue: 'قيمة الضريبة',
+    //data-table
+    Of: 'من',
+
+    //
+    SaleOrder: 'امر مبيعات',
 
 
     appname: 'App Name',

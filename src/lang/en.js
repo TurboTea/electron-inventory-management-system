@@ -57,6 +57,11 @@ export default {
     TaxName: 'Tax Name',
     TaxType: 'Tax Type',
     TaxValue: 'Tax Value',
+    //data-table
+    Of: 'of',
+
+    //
+    SaleOrder: 'Sale Order',
 
 
 

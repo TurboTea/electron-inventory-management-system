@@ -49,6 +49,10 @@
     }"
     
   >
+    <template v-slot:footer.page-text="items"> 
+      {{ items.pageStart }} - {{ items.pageStop }} {{ $t('Of') }} {{ items.itemsLength }} 
+    </template>
+    
     <template v-for="header in headers" v-slot:[`header.${header.value}`]="{ header }">
       {{ $t(header.text) }}
     </template>
