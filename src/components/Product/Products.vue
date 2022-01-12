@@ -3,13 +3,13 @@
     :headers="headers"
     :items="products"
     :search="search"
-    sort-by="name"
+    sort-by="code"
     class="elevation-4"
     :footer-props="{
         'items-per-page-text': $t('RowsPerPage'),           
     }"
   >
-    <template v-slot:footer.page-text="items"> 
+    <template v-slot:[`footer.page-text`]="items"> 
       {{ items.pageStart }} - {{ items.pageStop }} {{ $t('Of') }} {{ items.itemsLength }} 
     </template>
    
@@ -17,20 +17,22 @@
       {{ $t(header.text) }}
     </template>
 
-    <template v-slot:item.durability="{ item }">
-      <v-chip
-        :color="getColor(item.durability)"
-        dark
-      >
-        {{ item.durability }}
-      </v-chip>
+    <template v-slot:[`item.durability`]="{ item }">
+      <div v-if="item.durability == true">
+        <v-chip
+          :color="getColor(item.durability)"
+          dark
+        >
+          {{ formatDate(item.expirationDate) }}
+        </v-chip>
+      </div>
     </template>
 
-    <template v-slot:item.costPrice="{ item }">
+    <template v-slot:[`item.costPrice`]="{ item }">
       {{ formatNumber(item.costPrice) }}
     </template>
 
-    <template v-slot:item.salePrice="{ item }">
+    <template v-slot:[`item.salePrice`]="{ item }">
       {{ formatNumber(item.salePrice) }}
     </template>
     <!-- <template v-slot:item.imageUrl="{ item }">
@@ -57,7 +59,7 @@
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
-          max-width="900px"
+          max-width="700px"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -111,7 +113,7 @@
                   <v-col
                     cols="12"
                     sm="6"
-                    md="4"
+                    md="6"
                   >
                     <v-text-field
                       v-model="editedItem.code"
@@ -119,13 +121,30 @@
                       outlined
                       dense
                     ></v-text-field>
+                  
+                      <qrcode :value="editedItem.code" :size=300></qrcode>
                   </v-col>
                   <v-col
                     cols="12"
                     sm="6"
-                    md="8"
-                  >
-                      <qrcode :value="editedItem.code" :size=530></qrcode>
+                    md="6"
+                    >
+                    <v-file-input 
+                      v-model="image" 
+                      type="file" 
+                      :label="$t('Photo')" 
+                      
+                      outlined
+                      dense 
+                      @change="onFileChange" 
+                    />
+                  
+                    <v-img 
+                    :src="editedItem.imageUrl"
+                    contain
+                    width="300px"
+                    style="border: 1px dashed #ccc; min-height: 300px" 
+                    />
                   </v-col>
                 </v-row>
                 <v-row>
@@ -175,60 +194,61 @@
                     sm="6"
                     md="6"
                   >
-                  <v-row 
-                    style="margin: 0"
-                  >
-                    <v-select
-                      :items="families"
-                      :label="$t('Families')"
-                      item-value="_id"
-                      item-text="name"
-                      v-model="editedItem.familyId"
-                      outlined
-                      dense
-                    ></v-select>
+                    <!-- <v-row 
+                      style="margin: 0"
+                    > -->
+                      <v-select
+                        :items="families"
+                        :label="$t('Families')"
+                        item-value="_id"
+                        item-text="name"
+                        v-model="editedItem.familyId"
+                        outlined
+                        dense
+                      ></v-select>
 
-                    <v-btn
-                      text
-                      icon
-                      color="next"
-                      to="/setting"
-                    >
-                      <v-icon>
-                        mdi-open-in-new
-                      </v-icon>
-                    </v-btn>
-                  </v-row>
+                      <!-- <v-btn
+                        text
+                        icon
+                        color="next"
+                        to="/setting"
+                      >
+                        <v-icon>
+                          mdi-open-in-new
+                        </v-icon>
+                      </v-btn> -->
+                    <!-- </v-row> -->
                   </v-col>
+
                   <v-col
                     cols="12"
                     sm="6"
                     md="6"
                   >
-                  <v-row 
-                    style="margin: 0"
-                  >
-                    <v-select
-                      :items="units"
-                      :label="$t('UnitOfMeasure')"
-                      item-value="_id"
-                      item-text="name"
-                      v-model="editedItem.unitId"
-                      outlined
-                      dense
-                    ></v-select>
+                    <!-- <v-row 
+                      style="margin: 0"
+                    > -->
+                        <v-select
+                          :items="units"
+                          :label="$t('UnitOfMeasure')"
+                          item-value="_id"
+                          item-text="name"
+                          v-model="editedItem.unitId"
+                          outlined
+                          dense
+                        ></v-select>
 
-                    <v-btn
-                      text
-                      icon
-                      color="next"
-                      to="/setting"
-                    >
-                      <v-icon>
-                        mdi-open-in-new
-                      </v-icon>
-                    </v-btn>
-                  </v-row>
+                        <!-- <v-btn
+                          text
+                          icon
+                          color="next"
+                          to="/setting"
+                        >
+                        <v-icon>
+                          mdi-open-in-new
+                        </v-icon>
+                      </v-btn> -->
+                    <!-- </v-row> -->
                     
                   </v-col>
                 
@@ -278,7 +298,7 @@
                     </v-menu>
                   </v-col>
                   </v-row>
-                  <v-row>
+                  <!-- <v-row>
                   <v-col
                     cols="12"
                     sm="6"
@@ -302,11 +322,11 @@
                     <v-img 
                     :src="editedItem.imageUrl"
                     contain
-                    width="100%"
-                    style="border: 1px dashed #ccc; min-height: 530px" 
+                    width="100px"
+                    style="border: 1px dashed #ccc; min-height: 100px" 
                     />
                   </v-col>
-                  </v-row>
+                  </v-row> -->
                  
               </v-container>
             </v-card-text>
@@ -341,12 +361,12 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
        <v-icon
         small
         class="mr-2"
         color="success"
-        @click="routerClick($event)"
+        @click="routerClick(item)"
       >
         mdi-eye
       </v-icon>
@@ -398,15 +418,17 @@
       image: undefined,
       headers: [
         {
-          text: 'Name',
+          text: 'Code',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'code',
         },
+        { text: 'Name', value: 'name' },
         { text: 'Description', value: 'designation' },
-        { text: 'Code', value: 'code' },
         { text: 'BuyingPrice', value: 'costPrice' },
         { text: 'SellingPrice', value: 'salePrice' },
+        { text: 'Families', value: 'familyId.name' },
+        { text: 'UnitOfMeasure', value: 'unitId.name' },
         { text: 'Durability', value: 'durability' },
         // { text: 'Photo Produit', value: 'imageUrl' },
         { text: 'Actions', value: 'actions', sortable: false },
@@ -426,7 +448,8 @@
         alertQuantity: '',
         imageUrl: '',
         expirationDate: '',
-        familyId: ''
+        familyId: '',
+        unitId: ''
       },
       defaultItem: {
         name: '',
@@ -439,7 +462,8 @@
         alertQuantity: '',
         imageUrl: '',
         expirationDate: '',
-        familyId: ''
+        familyId: '',
+        unitId: ''
       },
     }),
 
@@ -466,9 +490,12 @@
     },
 
     methods: {
+      formatDate(value) {
+        return moment(value).locale(this.$i18n.locale).format("MMMM DD YYYY")
+      },
 
       formatNumber(value) {
-        return new Intl.NumberFormat('fr', { style: 'currency', currency: 'DZD' }).format(value)
+        return new Intl.NumberFormat(this.$i18n.locale, { style: 'currency', currency: 'DZD' }).format(value)
       },
 
       getColor (valeur) {
@@ -566,6 +593,18 @@
   }
   .v-card__actions {
     background-color: #00366f;
+  }
+  .v-data-table {
+    border: 1px solid black;
+  }
+  ::v-deep .v-data-table-header {
+    background-color: #00366f; 
+  } 
+  ::v-deep table > thead > tr:last-child > th {
+    color: white !important;
+  }
+  ::v-deep table > thead > tr:last-child > th .v-icon__svg {
+    color: #ffffff !important;
   }
   .col {
     padding: 0px !important;

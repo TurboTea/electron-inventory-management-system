@@ -57,7 +57,7 @@ async function createWindow() {
   // Send products items
   async function sendProducts() {
     try {
-      const products = await Product.find().sort({ created: 1 })
+      const products = await Product.find().sort({ created: 1 }).populate("familyId").populate("unitId")
       win.webContents.send('products:get', JSON.stringify(products))
     } catch (err) {
       console.log(err)
@@ -99,6 +99,7 @@ async function createWindow() {
       doc.imageUrl = item.imageUrl;
       doc.expirationDate = item.expirationDate;
       doc.familyId = item.familyId;
+      doc.unitId = item.unitId;
       await doc.save();
       sendProducts()
     } catch (error) {
@@ -413,6 +414,16 @@ async function createWindow() {
         console.log(err)
       }
     }
+
+    // Load Product Information
+    ipcMain.on('productInfo:load',async (e, id) => {
+      try {
+        const productInfo = await Product.findOne({ _id: id})
+        win.webContents.send('productInfo:get', JSON.stringify(productInfo))
+      } catch (error) {
+        console.log(error)
+      }
+    })
   
     // Add ProductPurchase
     ipcMain.on('productPurchases:add', async (e, item) => {
