@@ -37,6 +37,15 @@
           <company />
         </v-expansion-panel-content>
       </v-expansion-panel>
+
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          User
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <user />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     </v-expansion-panels>
     
   </v-container>
@@ -47,13 +56,15 @@
   import Family from '../components/Family.vue'
   import Unit from '../components/Unit.vue'
   import Company from '../components/Company.vue'
+  import User from '../components/User.vue'
 
   export default {
     components: {
             Tax,
             Family,
             Unit,
-            Company
+            Company,
+            User
         },
   }
 </script>

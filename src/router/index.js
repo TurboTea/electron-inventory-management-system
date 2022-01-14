@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import Home from '../views/Home.vue'
-import Vendor from '../views/Vendor.vue'
+import Vendor from '../views/Customer.vue'
 import Customer from '../views/Customer.vue'
 import Stock from '../views/Stock.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Setting from '../views/Setting.vue'
 
+import auth from '../middleware/auth.js';
 
 Vue.use(VueRouter)
 
@@ -14,7 +16,10 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: {
+      middleware: [auth]
+    }
   },
   {
     path: '/about',

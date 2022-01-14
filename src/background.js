@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+//import { userSetter } from 'core-js/fn/symbol'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const connectDB = require('./config/db')
 const Product = require('./models/Product')
@@ -17,6 +18,8 @@ const Tax = require('./models/Tax')
 const Family = require('./models/Family')
 const Unit = require('./models/Unit')
 const Company = require('./models/Company')
+const User = require('./models/User')
+const bcrypt =require('bcrypt')
 
 
 // Connect to database
@@ -47,6 +50,7 @@ async function createWindow() {
     if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
+    win.setMenu(null)
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
@@ -736,6 +740,88 @@ async function createWindow() {
   //     console.log(error)
   //   }
   // })
+    // Load users
+    ipcMain.on('users:load', sendUsers)
+
+    // Send users
+    async function sendUsers() {
+      try {
+        const users = await User.find().sort({ created: 1 })
+        win.webContents.send('users:get', JSON.stringify(users))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  
+    // Add users
+    ipcMain.on('users:add', async (e, item) => {
+      try {
+        const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(item.password, salt)
+
+
+        await User.create({ userName: item.userName, 
+                            email: item.email, 
+                            password: hashedPassword
+                          })
+        sendUsers()
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Delete users
+    ipcMain.on('users:delete', async (e, id) => {
+      try {
+        await User.findOneAndDelete({ _id: id })
+        sendUsers()
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  
+    // Edit users
+    ipcMain.on('users:edit', async (e, item) => {
+      try {
+        const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(item.password, salt)
+
+        const doc = await User.findById(item._id);
+        doc.userName = item.userName;
+        doc.email = item.email;
+        doc.password = hashedPassword;
+        await doc.save();
+        sendUsers()
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
+    // authenticate user
+    ipcMain.on('userInfo:load',async (e, item) => {
+      try {
+        const user = await User.findOne({ userName: item.username})
+
+        if ( user == null) {
+          win.webContents.send('userInfo:get', JSON.stringify(user))
+
+        }
+        try {
+          if (await bcrypt.compare(item.password, user.password)) {
+            win.webContents.send('userInfo:get', JSON.stringify(user))
+          }else {
+            win.webContents.send('userInfo:get', 800)
+  
+          }
+
+        } catch (error) {
+          console.log(error)
+        }
+        win.webContents.send('userInfo:get', JSON.stringify(userInfo))
+      } catch (error) {
+        console.log(error)
+      }
+    })
  
 }
 

@@ -1,8 +1,10 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <v-col
-        cols="4"
+        cols="6"
+        md="2"
+        
         v-for="item in items"
         :key="item.title"
       >     

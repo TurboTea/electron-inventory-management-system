@@ -103,25 +103,71 @@
             color="next">
             <v-icon>mdi-bell</v-icon>
           </v-btn>
-          <v-btn 
+          <!-- <v-btn 
             icon
-            color="next">
+            color="next"
+            
+            >
             <v-icon>mdi-account</v-icon>
-          </v-btn>
+          </v-btn> -->
+          <template>
+            <div class="text-center">
+              <v-menu >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    color="next"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-account</v-icon>
+                  </v-btn>
+                </template>
+                <v-list
+                dense
+                nav
+                shaped>
+                  <v-list-item
+                    v-for="(item, index) in menuItems"
+                    :key="index"
+                    
+                  >
+                    <v-list-item-avatar >
+                      <v-icon style="justify-content: none;">{{ item.icon }}</v-icon>
+                    </v-list-item-avatar>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+          </template>
+           <!-- <v-btn 
+            icon
+            color="next"
+            @click="auth_sign_out">
+            <v-icon>mdi-logout</v-icon>
+          </v-btn> -->
     </v-app-bar>
 
     <v-main>
       <router-view ></router-view>
     </v-main>
+    <DialogLogin />
   </v-app>
 </template>
 
 <script>
   import LocaleChanger from './components/LocaleChanger.vue'
+  import DialogLogin from './components/DialogLogin';
+  import { mapGetters } from 'vuex';
 
   export default {
     components: {
-    LocaleChanger
+      LocaleChanger,
+      DialogLogin
     },
     data: () => ({ 
       
@@ -154,7 +200,26 @@
           { title: 'About', icon: 'mdi-information', to: '/about' }
         ],
         right: null,
+        menuItems: [
+          { title: 'Home', icon: 'mdi-home', func: '' },
+          { title: 'Logout', icon: 'mdi-logout', func: 'auth_sign_out' },
+          
+        ],
+
       }),
+
+       computed: {
+        ...mapGetters({
+            authenticated: 'authenticated',
+        }),
+        
+        },
+
+      methods: {
+        auth_sign_out () {
+          this.$store.commit('account_sign_out');
+        }
+  }
   }
 </script>
 <style scoped>

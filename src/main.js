@@ -9,10 +9,13 @@ import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
 
+store.dispatch('attempt', localStorage.getItem('userInfo')).then(() => {
 new Vue({
   router,
   store,
   i18n,
   vuetify,
-  render: h => h(App)
+  render: h => h(App),
+  
 }).$mount('#app')
+})
