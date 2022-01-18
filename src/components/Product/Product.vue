@@ -9,7 +9,7 @@
              <h1>Fiche Technique</h1>
           </v-col>
           <v-col>
-            <v-hover v-slot="{ hover }">
+            <!-- <v-hover v-slot="{ hover }">
             <v-img 
                       :src="productInfo.imageUrl"
                       contain
@@ -17,7 +17,6 @@
                       style="float: right; border: 1px solid;"
                       alt="Product Image"
                     >
-                    <!-- <v-hover v-slot="{ hover }"> -->
                      <v-file-input 
                       v-model="image" 
                       type="file" 
@@ -28,9 +27,9 @@
                       v-if="hover"
                       @change="onFileChange" 
                     />
-                    <!-- </v-hover> -->
+                    
             </v-img> 
-            </v-hover>
+            </v-hover> -->
           </v-col>
         </v-row>
       </v-card-title>
@@ -77,10 +76,10 @@
                         :label="$t('Description')"
                         outlined
                         dense
-                        rows="6"
+                        rows="8"
                       ></v-textarea>
 
-                      <v-row>
+                      <!-- <v-row>
                         <v-col>
                           <v-select
                             :items="families"
@@ -105,7 +104,7 @@
                           ></v-select>
                         </v-col>
 
-                      </v-row>
+                      </v-row> -->
                     </v-col> 
 
                     <v-col
@@ -134,6 +133,33 @@
                         outlined
                         dense
                       ></v-text-field>
+
+                      <v-row>
+                        <v-col>
+                          <v-select
+                            :items="families"
+                            :label="$t('Families')"
+                            item-value="_id"
+                            item-text="name"
+                            v-model="productInfo.familyId"
+                            outlined
+                            dense
+                          ></v-select>
+                        </v-col>
+
+                        <v-col>
+                          <v-select
+                            :items="units"
+                            :label="$t('UnitOfMeasure')"
+                            item-value="_id"
+                            item-text="name"
+                            v-model="productInfo.unitId"
+                            outlined
+                            dense
+                          ></v-select>
+                        </v-col>
+
+                      </v-row>
 
                     </v-col> 
               
@@ -198,31 +224,35 @@
                 sm="6"
                 md="4"
               >        
-              <v-img
+              <!-- <v-img
                 contain
                   width="300px"
                   class="ma-auto"
                   alt="Product QrCode"
               >
                 <qrcode :value="productInfo.code" :size=300></qrcode>     
-              </v-img> 
-                <!-- <v-img 
-                  :src="productInfo.imageUrl"
-                  contain
-                  width="150px"
-                  style="float: right; border: 1px solid;"
-                  alt="Product Image"
-                /> -->
-                  <!-- <v-file-input 
-                      v-model="image" 
-                      type="file" 
-                      :label="$t('Photo')" 
-                      
-                      outlined
-                      dense 
-                      @change="onFileChange" 
-                    />
-               -->
+              </v-img>  -->
+               <v-hover v-slot="{ hover }">
+                <v-img 
+                          :src="productInfo.imageUrl"
+                          contain
+                          width="100%"
+                          style="float: center; border: 1px solid;"
+                          alt="Product Image"
+                        >
+                        <v-file-input 
+                          v-model="image" 
+                          type="file" 
+                          :label="$t('Photo')" 
+                          hide-input
+                          outlined
+                          dense 
+                          v-if="hover"
+                          @change="onFileChange" 
+                        />
+                        
+                </v-img> 
+                </v-hover>
               </v-col>
 
 
@@ -254,12 +284,12 @@
 <script>
     import {ipcRenderer} from "electron";
     import moment from 'moment';
-    import Qrcode from 'v-qrcode/src/index'
+    // import Qrcode from 'v-qrcode/src/index'
 
     export default {
-        components: {
-            Qrcode,
-        },
+        // components: {
+        //     Qrcode,
+        // },
         
         data: () => ({
             id: '',

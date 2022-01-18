@@ -2,9 +2,6 @@
   <v-container fluid>
     <v-row>
       <v-col
-        cols="6"
-        md="2"
-        
         v-for="item in items"
         :key="item.title"
       >     
@@ -18,7 +15,6 @@
           <v-img
             contain
             width="100%"
-            
             :src="item.img"
           >
           </v-img>

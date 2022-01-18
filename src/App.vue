@@ -46,6 +46,7 @@
               :src="item.img"
             >
           </v-img> -->
+          
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -123,23 +124,39 @@
                     <v-icon>mdi-account</v-icon>
                   </v-btn>
                 </template>
+
                 <v-list
                 dense
                 nav
-                shaped>
+                >
                   <v-list-item
-                    v-for="(item, index) in menuItems"
-                    :key="index"
-                    
+                      
                   >
-                    <v-list-item-avatar >
-                      <v-icon style="justify-content: none;">{{ item.icon }}</v-icon>
+                    <v-list-item-avatar style="margin-right: 0px; margin-top: 0px; margin-bottom: 0px;">
+                      <v-icon style="justify-content: left;">mdi-account-circle</v-icon>
                     </v-list-item-avatar>
 
                     <v-list-item-content>
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      <v-list-item-title>Profil</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
+
+
+
+                  <v-list-item
+                    @click="auth_sign_out"
+
+                  >
+                    <v-list-item-avatar style="margin-right: 0px; margin-top: 0px; margin-bottom: 0px;">
+                      <v-icon style="justify-content: left;">mdi-logout</v-icon>
+                    </v-list-item-avatar>
+
+                    <v-list-item-content>
+                      <v-list-item-title>Logout</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  
                 </v-list>
               </v-menu>
             </div>

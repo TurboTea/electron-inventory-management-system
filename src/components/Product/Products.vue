@@ -63,7 +63,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="next"
+              color="success"
               dark
               icon
               class="mb-2"
@@ -95,6 +95,13 @@
                       outlined
                       dense
                     ></v-text-field>
+
+                    <v-text-field
+                      v-model="editedItem.code"
+                      :label="$t('Code')"
+                      outlined
+                      dense
+                    ></v-text-field>
                   </v-col>
                   <v-col
                     cols="12"
@@ -106,6 +113,7 @@
                       :label="$t('Description')"
                       outlined
                       dense
+                      rows="4"
                     ></v-textarea>
                   </v-col>
                 </v-row>
@@ -115,37 +123,42 @@
                     sm="6"
                     md="6"
                   >
-                    <v-text-field
-                      v-model="editedItem.code"
-                      :label="$t('Code')"
-                      outlined
-                      dense
-                    ></v-text-field>
+                    
                   
-                      <qrcode :value="editedItem.code" :size=300></qrcode>
+                      
                   </v-col>
+                  <v-row>
                   <v-col
                     cols="12"
                     sm="6"
                     md="6"
                     >
-                    <v-file-input 
-                      v-model="image" 
-                      type="file" 
-                      :label="$t('Photo')" 
-                      
-                      outlined
-                      dense 
-                      @change="onFileChange" 
-                    />
-                  
-                    <v-img 
-                    :src="editedItem.imageUrl"
-                    contain
-                    width="300px"
-                    style="border: 1px dashed #ccc; min-height: 300px" 
-                    />
+                    
+                      <v-file-input 
+                        v-model="image" 
+                        type="file" 
+                        :label="$t('Photo')" 
+                        
+                        outlined
+                        dense 
+                        @change="onFileChange" 
+                      />
                   </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="6"
+                  
+                  >
+                      <v-img 
+                      :src="editedItem.imageUrl"
+                      contain
+                      width="300px"
+                      style="border: 1px dashed #ccc; min-height: 300px" 
+                      />
+                    
+                  </v-col>
+                  </v-row>
                 </v-row>
                 <v-row>
                   <v-col
@@ -365,19 +378,19 @@
        <v-icon
         small
         class="mr-2"
-        color="success"
+        color="primary"
         @click="routerClick(item)"
       >
-        mdi-eye
+        mdi-pencil
       </v-icon>
-      <v-icon
+      <!-- <v-icon
         small
         class="mr-2"
         color="primary"
         @click="editItem(item)"
       >
         mdi-pencil
-      </v-icon>
+      </v-icon> -->
       <v-icon
         small
         color="red"
@@ -404,12 +417,12 @@
 <script>
   import {ipcRenderer} from "electron";
   import moment from 'moment';
-  import Qrcode from 'v-qrcode/src/index'
+  // import Qrcode from 'v-qrcode/src/index'
 
   export default {
-    components: {
-      Qrcode,
-    },
+    // components: {
+    //   Qrcode,
+    // },
     data: () => ({
       search: '',
       date_expiration: '',
