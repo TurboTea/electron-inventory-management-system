@@ -1,5 +1,5 @@
 <template>
-  <v-container style="padding: 25px 200px 75px 200px;">
+  <v-container fluid>
     <v-card 
       style="border: 1px"
     >
@@ -7,29 +7,6 @@
         <v-row>
           <v-col>
              <h1>Fiche Technique</h1>
-          </v-col>
-          <v-col>
-            <!-- <v-hover v-slot="{ hover }">
-            <v-img 
-                      :src="productInfo.imageUrl"
-                      contain
-                      width="100px"
-                      style="float: right; border: 1px solid;"
-                      alt="Product Image"
-                    >
-                     <v-file-input 
-                      v-model="image" 
-                      type="file" 
-                      :label="$t('Photo')" 
-                       hide-input
-                      outlined
-                      dense 
-                      v-if="hover"
-                      @change="onFileChange" 
-                    />
-                    
-            </v-img> 
-            </v-hover> -->
           </v-col>
         </v-row>
       </v-card-title>
@@ -40,12 +17,9 @@
       </v-divider>
             <v-card-text>
               <v-row>
-                <v-col
-                >
+                <v-col>
                   <v-row>
-                    <v-col
-                      
-                    >
+                    <v-col>
                       <v-text-field
                           v-model="productInfo.name"
                           :label="$t('Name')"
@@ -54,9 +28,7 @@
                       ></v-text-field>
                     </v-col>
 
-                    <v-col
-                     
-                    >
+                    <v-col>
                       <v-text-field
                             v-model="productInfo.code"
                             :label="$t('Code')"
@@ -68,9 +40,7 @@
                 
 
                   <v-row>
-                    <v-col
-                     
-                    >
+                    <v-col>
                       <v-textarea
                         v-model="productInfo.designation"
                         :label="$t('Description')"
@@ -79,37 +49,9 @@
                         rows="8"
                       ></v-textarea>
 
-                      <!-- <v-row>
-                        <v-col>
-                          <v-select
-                            :items="families"
-                            :label="$t('Families')"
-                            item-value="_id"
-                            item-text="name"
-                            v-model="productInfo.familyId"
-                            outlined
-                            dense
-                          ></v-select>
-                        </v-col>
-
-                        <v-col>
-                          <v-select
-                            :items="units"
-                            :label="$t('UnitOfMeasure')"
-                            item-value="_id"
-                            item-text="name"
-                            v-model="productInfo.unitId"
-                            outlined
-                            dense
-                          ></v-select>
-                        </v-col>
-
-                      </v-row> -->
                     </v-col> 
 
-                    <v-col
-                      
-                    >
+                    <v-col>
                       <v-text-field
                         v-model="productInfo.costPrice"
                         :label="$t('BuyingPrice')"
@@ -158,14 +100,10 @@
                             dense
                           ></v-select>
                         </v-col>
-
                       </v-row>
-
                     </v-col> 
-              
                   </v-row>
 
-                
                   <v-row>
                     <v-col
                       cols="12"
@@ -179,9 +117,7 @@
                       ></v-checkbox>
                     </v-col>
 
-                    <v-col
-              
-                    >
+                    <v-col>
                       <v-menu
                         v-model="date_expiration"
                         :close-on-content-click="false"
@@ -211,29 +147,19 @@
                 </v-row>
               </v-col>    
 
-
               <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
+                class="mx-4"
+                inset
+                vertical
+              ></v-divider>
 
-              
               <v-col
                 cols="12"
                 sm="6"
                 md="4"
               >        
-              <!-- <v-img
-                contain
-                  width="300px"
-                  class="ma-auto"
-                  alt="Product QrCode"
-              >
-                <qrcode :value="productInfo.code" :size=300></qrcode>     
-              </v-img>  -->
-               <v-hover v-slot="{ hover }">
-                <v-img 
+                <v-hover v-slot="{ hover }">
+                  <v-img 
                           :src="productInfo.imageUrl"
                           contain
                           width="100%"
@@ -284,13 +210,8 @@
 <script>
     import {ipcRenderer} from "electron";
     import moment from 'moment';
-    // import Qrcode from 'v-qrcode/src/index'
 
     export default {
-        // components: {
-        //     Qrcode,
-        // },
-        
         data: () => ({
             id: '',
             productInfo: [],

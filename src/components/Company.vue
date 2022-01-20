@@ -1,7 +1,178 @@
 <template>
 <v-container fluid>
+  <v-card 
+      style="border: 1px"
+    >
+     
+      <v-divider
+        class="mx-4"
+        inset
+        >
+      </v-divider>
+            <v-card-text>
+              <v-row>
+
+                <v-col>
+                  <v-row>  
+                    <v-col>
+                      <v-text-field
+                          v-model="companyInfo.companyName"
+                          :label="$t('Name')"
+                          outlined
+                          dense
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col>
+                      <v-text-field
+                          v-model="companyInfo.country"
+                          :label="$t('Country')"
+                          outlined
+                          dense
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="companyInfo.city"
+                        :label="$t('City')"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </v-col> 
+
+                    <v-col>
+                      <v-text-field
+                          v-model="companyInfo.phone"
+                          :label="$t('Phone')"
+                          outlined
+                          dense
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                          v-model="companyInfo.taxIdentifierNumber"
+                          :label="$t('NIF')"
+                          outlined
+                          dense
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col>
+                      <v-text-field
+                          v-model="companyInfo.statisticalIdentifierNumber"
+                          :label="$t('NIS')"
+                          outlined
+                          dense
+                          ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="companyInfo.street"
+                        :label="$t('Street')"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col>
+                      <v-text-field
+                        v-model="companyInfo.zip"
+                        :label="$t('ZIP')"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="companyInfo.commercialRegisterNumber"
+                        :label="$t('RC')"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col>
+                      <v-text-field
+                        v-model="companyInfo.mobile"
+                        :label="$t('Mobile')"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </v-col>
+
+                  </v-row>
+                </v-col>
+
+                <v-divider
+                  class="mx-4"
+                  inset
+                  vertical
+                ></v-divider>
+
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4"
+                >        
+                    <v-hover v-slot="{ hover }">
+                      <v-img 
+                              :src="companyInfo.logo"
+                              contain
+                              width="100%"
+                              style="float: center; border: 1px solid;"
+                              alt="Company Logo"
+                            >
+                            <v-file-input 
+                              v-model="image" 
+                              type="file" 
+                              :label="$t('Logo')" 
+                              hide-input
+                              outlined
+                              dense 
+                              v-if="hover"
+                              @change="onFileChange" 
+                            />
+                            
+                    </v-img> 
+                    </v-hover>
+                </v-col>
+
+              </v-row>
+                  
+          </v-card-text>
+
+
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="error"
+                @click="close"
+              >
+                {{ $t('Cancel') }}
+              </v-btn>
+              <v-btn
+                color="success"
+                @click="save"
+              >
+                {{ $t('Edit') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
  
-  <v-data-table
+  <!-- <v-data-table
     :headers="headers"
     :items="companies"
     sort-by="name"
@@ -29,19 +200,7 @@
           v-model="dialog"
           max-width="900px"
         >
-          <!-- <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="next"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>
-                mdi-plus-circle
-              </v-icon>
-            </v-btn>
-          </template> -->
+         
           <v-card>
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
@@ -134,18 +293,7 @@
                         dense
                         ></v-text-field>
                     </v-col> 
-                    <!-- <v-col
-                        cols="12"
-                        sm="6"
-                        md="4"
-                    >
-                        <v-text-field
-                        v-model="editedItem.currency"
-                        label="Devise"
-                        outlined
-                        dense
-                        ></v-text-field>
-                    </v-col>  -->
+                   
                     <v-col
                         cols="12"
                         sm="6"
@@ -256,13 +404,7 @@
       >
         mdi-pencil
       </v-icon>
-      <!-- <v-icon
-        small
-        color="red"
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon> -->
+    
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -275,7 +417,7 @@
         </v-icon>
       </v-btn>
     </template>
-  </v-data-table>
+  </v-data-table> -->
 </v-container>
 </template>
 
@@ -300,6 +442,7 @@ import {ipcRenderer} from "electron";
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       companies: [],
+      companyInfo: [],
       editedIndex: -1,
       editedItem: {
         companyName: '',
@@ -356,7 +499,7 @@ import {ipcRenderer} from "electron";
       createImage(file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.editedItem.logo = e.target.result;
+          this.companyInfo.logo = e.target.result;
         };
         reader.readAsDataURL(file);
         },
@@ -371,6 +514,7 @@ import {ipcRenderer} from "electron";
           ipcRenderer.send('companies:load'),
           ipcRenderer.on('company:get', (e, companies) => {
           this.companies = JSON.parse(companies)
+          this.companyInfo = this.companies[0]
           
         })
       },
@@ -408,24 +552,14 @@ import {ipcRenderer} from "electron";
       },
 
       save () {
-        if (this.editedIndex > -1) {
-          ipcRenderer.send('companies:edit', this.editedItem)
-        } else {
-          ipcRenderer.send('companies:add', this.editedItem)
-        }
-        this.close()
+        ipcRenderer.send('companies:edit', this.companyInfo)
+
       },
     },
   }
 </script>
 
 <style scoped>
-  .v-card__title {
-    background-color: #00366f;
-    color: white;
-  }
-  .v-card__actions {
-    background-color: #00366f;
-  }
+ 
  
 </style>

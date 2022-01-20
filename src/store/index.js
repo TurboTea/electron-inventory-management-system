@@ -25,11 +25,20 @@ export default new Vuex.Store({
 
       ipcRenderer.send('userInfo:load', params),
       ipcRenderer.on('userInfo:get', (e, userInfo) => {
-      state.userInfo = JSON.parse(userInfo)
-      localStorage.setItem('userInfo', userInfo)
+        let user = JSON.parse(userInfo)
+        if (user == null) {
+          console.log('user not found')
+        }else if (user == 800) {
+          console.log('wrong password')
+        }else {
+          state.userInfo = user
+          localStorage.setItem('userInfo', user)
+          state.auth_login = true
+        }
+
       
       })
-      state.auth_login = true
+      
     },
 
     

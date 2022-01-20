@@ -8,9 +8,13 @@
       </template>
       <v-list class="LocaleChangerMenu">
         <v-list-item v-for="(lang, i) in langs" :key="i" @click="changeLang(lang, i)">
-          <v-list-item-content>
+          <v-list-item-avatar>
             <v-img :src="require(`../assets/flags/${langs[i]}.png`)" :alt="lang" />
-            <span>{{ lang }}</span>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            
+              <span>{{ lang }}</span>
+            
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -72,15 +76,11 @@ export default {
     padding: 6px 0;
     text-transform: uppercase;
     font-size: 10px;
-    width: 60px;
-    height: 60px;
-    color: #888888;
+    
     & > * {
       line-height: initial;
       flex: initial;
     }
-    span {
-      margin-left: 10px;
-    }
+    
   }
 </style>

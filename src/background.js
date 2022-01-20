@@ -804,7 +804,6 @@ async function createWindow() {
 
         if ( user == null) {
           win.webContents.send('userInfo:get', JSON.stringify(user))
-
         }
         try {
           if (await bcrypt.compare(item.password, user.password)) {
