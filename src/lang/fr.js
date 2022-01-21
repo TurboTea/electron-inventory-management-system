@@ -62,6 +62,16 @@ export default {
 
     //
     SaleOrder: 'Bon de livraison',
+    // Login
+    username: 'Nom d\'utilisateur',
+    AccountLogin: 'Connexion au compte',
+    Password: 'Mot de passe',
+    RemeberMyLoginOnThisComputer: 'Mémoriser mon login sur cet ordinateur',
+    Login: 'Connexion',
+    NameIsRequired: 'Le nom est requis',
+    NameMustBeLessThan30Characters: 'Le nom doit comporter moins de 30 caractères',
+    PasswordIsRequired: 'Mot de passe requis',
+    PasswordMustBeMoreThan8Characters: 'Le mot de passe doit comporter plus de 8 caractères',
 
 
 

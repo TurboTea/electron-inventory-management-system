@@ -62,6 +62,16 @@ export default {
 
     //
     SaleOrder: 'امر مبيعات',
+    // Login
+    username: 'اسم المستخدم',
+    AccountLogin: 'تسجل الدخول',
+    Password: 'كلمة المرور',
+    RemeberMyLoginOnThisComputer: 'تذكر تسجيل الدخول الخاص بي على هذا الكمبيوتر',
+    Login: 'تسجيل الدخول',
+    NameIsRequired: 'الاسم مطلوب',
+    NameMustBeLessThan30Characters: 'يجب ألا يزيد عدد أحرف الاسم عن 30 حرفًا',
+    PasswordIsRequired: 'كلمة المرور مطلوبة',
+    PasswordMustBeMoreThan8Characters: 'كلمة المرور يجب أن تكون أكثر من 8 أحرف',
 
 
     appname: 'App Name',

@@ -1,16 +1,17 @@
 <template>
   <v-container>
      <v-card 
-      style="border: 1px; margin: 50px auto; "
+      style="margin: 50px auto;"
       max-width="800"
       class="rounded-card"
+      elevation="6"
     >
     <!-- <div id="curved-corner-topleft"></div> -->
       <v-card-title>
         <v-row>
           <v-col>
             <h1 style="margin: auto; text-align: center;">EURL NEXT CHALLENGE</h1>
-            <h2 style="margin: auto; text-align: center;">Bureau d'étude et de conseil en informatique</h2>
+            
           </v-col>
         </v-row>
       </v-card-title>
@@ -19,7 +20,7 @@
         class="ma-4"
         inset
       >
-      
+
       </v-divider>
 
             <v-card-text>
@@ -27,6 +28,7 @@
                 <v-col>
                   <v-row>
                     <v-col>
+                      <h2 style="color: #00366f; margin: auto; text-align: center;">Bureau d'étude et de conseil en informatique</h2>
 
                       <v-list>
                         <v-list-item

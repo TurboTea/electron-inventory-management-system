@@ -62,6 +62,16 @@ export default {
 
     //
     SaleOrder: 'Sale Order',
+    // Login
+    username: 'username',
+    AccountLogin: 'Account Login',
+    Password: 'Password',
+    RemeberMyLoginOnThisComputer: 'Remeber my login on this computer',
+    Login: 'Login',
+    NameIsRequired: 'Name is required',
+    NameMustBeLessThan30Characters: 'Name must be less than 30 characters',
+    PasswordIsRequired: 'Password is required',
+    PasswordMustBeMoreThan8Characters: 'Password must be more than 8 characters',
 
 
 

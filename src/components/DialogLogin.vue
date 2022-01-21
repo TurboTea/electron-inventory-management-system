@@ -2,46 +2,39 @@
     <v-dialog v-model="!this.$store.state.auth_login" persistent max-width="900px">
         <v-card>
             <v-card-title></v-card-title>
-
             <v-card-text>
-
-
                 <v-row>
                     <v-col
                         cols="12"
                         sm="6"
-                        md="6"
-                        
+                        md="6" 
                     >
                         <v-img 
-                            src="../assets/icons/logo.png"
+                            src="../assets/icons/couleur/stock.png"
                             contain
                             width="100%"
                             alt="Next Challenge"
-                            
                         />
                     </v-col>
                     <v-divider
                         class="mx-4"
                         inset
                         vertical
-                        ></v-divider>
+                    ></v-divider>
                     <v-col>
-                        <v-card-title style="">Account login</v-card-title>
+                        <v-card-title>{{ $t('AccountLogin') }}</v-card-title>
                             <v-form v-model="valid">
                                 <v-container grid-list-md>
-                                    
-                                        <v-text-field 
-                                            label="Name" 
-                                            filled 
-                                            v-model="username"
-                                            :rules="nameRules"
-                                            :counter="30"
-                                            required 
-                                        ></v-text-field>
-                                       
                                     <v-text-field 
-                                        label="Password" 
+                                        :label="$t('username')" 
+                                        filled 
+                                        v-model="username"
+                                        :rules="nameRules"
+                                        :counter="30"
+                                        required 
+                                    ></v-text-field>
+                                    <v-text-field 
+                                        :label="$t('Password')" 
                                         filled 
                                         type="password" 
                                         v-model="password" 
@@ -49,8 +42,7 @@
                                         :counter="8"
                                         required
                                     ></v-text-field>
-
-                                    <v-checkbox v-model="remeber_login" label="Remeber my login on this computer"></v-checkbox>
+                                    <v-checkbox v-model="remeber_login" :label="$t('RemeberMyLoginOnThisComputer')"></v-checkbox>
                                 </v-container>
                             </v-form>
                             <v-spacer></v-spacer>
@@ -62,27 +54,19 @@
                                     :disabled="this.valid == false"
                                     block 
                                     @click="auth_login">
-                                        Login
+                                        {{ $t('Login') }}
                                 </v-btn>
                             </v-card-actions>
-                        
                     </v-col>
                 </v-row>
             </v-card-text>
-
-            
         </v-card>
     </v-dialog>
 </template>
 
 <script>
-    
-    
-
     export default {
         name: "DialogLogin",
-        
-         
         data () {
             return {
                 username: '',
@@ -90,20 +74,17 @@
                 remeber_login: false,
                 valid: false,
                 nameRules: [
-                    v => !!v || 'Name is required',
-                    v => v.length <= 30 || 'Name must be less than 30 characters',
+                    v => !!v || this.$t('NameIsRequired'),
+                    v => v.length <= 30 || this.$t('NameMustBeLessThan30Characters'),
                 ],
                 passwordRules: [
-                    v => !!v || 'Name is required',
-                    v => v.length >= 8 || 'Password must be more than 8 characters',
+                    v => !!v || this.$t('PasswordIsRequired'),
+                    v => v.length >= 8 || this.$t('PasswordMustBeMoreThan8Characters'),
                 ],
-
             }
         },
-       
         methods: {
             auth_login () {
-                // console.log('hit login btn')
                 this.$store.commit('account_sign_in', {
                     username: this.username,
                     password: this.password,
@@ -116,6 +97,3 @@
         }
     }
 </script>
-
-<style scoped>
-</style>
