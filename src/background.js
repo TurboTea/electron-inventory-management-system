@@ -821,6 +821,28 @@ async function createWindow() {
         console.log(error)
       }
     })
+
+    async function createAdminUser() {
+      try {
+        const docCount = await User.countDocuments({}).exec();
+
+        const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash('12345678', salt)
+       
+        if ( docCount == 0) {
+          await User.create({
+            userName: 'admin',
+            password: hashedPassword
+          
+          })
+        }
+  
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    createAdminUser();
  
 }
 

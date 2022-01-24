@@ -1,5 +1,5 @@
 export default {
-    CompanyName: 'Next Challenge',
+    CompanyName: 'Eurl Next Challenge',
     Home: 'Home',
     Dashboard: 'Dashboard',
     Products: 'Products',
@@ -72,26 +72,26 @@ export default {
     NameMustBeLessThan30Characters: 'Name must be less than 30 characters',
     PasswordIsRequired: 'Password is required',
     PasswordMustBeMoreThan8Characters: 'Password must be more than 8 characters',
+    // About
+    Office: 'IT study and consultancy office',
+    Services: 'Our services',
+    Telephone: '036 63 93 82',
+    Mobile: '0552 56 96 54',
+    Contact: 'contact@nextchallenge-dz.com',
+    Site: 'https://nextchallenge-dz.com',
+    web: 'Web Application Development',
+    ecommerce: 'Ecommerce Application Development',
+    erp: 'ERP Development',
+    mobileDev: 'Mobile Application Development',
+    design: 'UI/UX Design',
+    support: 'Maintenance & Support',
+    slogan: 'we provide solutions for your businesse!',
+    Inventory: 'Inventory',
 
 
 
 
 
-    appname: 'App Name',
-    welcome: 'Welcome !',
-    welcomeUser: 'Welcome {name} !',
-    login: 'Login',
-    logout: 'Logout',
-    register: 'Register',
-    darkMode: 'Dark Mode',
-    lightMode: 'Light mode',
-    name: 'Name',
-    password: 'Password',
-    confirmPassword: 'Confirm password',
-    noAccount: 'No account?',
-    alreadyAnAccount: 'You already have an account?',
-    isRequired: 'is required',
-    passwordLength: 'The password must be more than {length} characters long',
-    passwordConfirm: 'The passwords specified must be identical'
+
   }
   

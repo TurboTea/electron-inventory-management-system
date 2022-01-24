@@ -9,17 +9,17 @@
       :right="this.$i18n.locale == 'ar'"
     >
       <v-list-item>
-        <v-list-item-avatar color="white">
+        <v-list-item-avatar tile>
           <v-img           
             contain
-            src="./assets/icons/logo.png"
+            src="./assets/icons/couleur/inventory.png"
           >
           </v-img>
         </v-list-item-avatar>
         <v-list-item-content>
         
           <v-list-item-title class="text-h6">
-            {{ $t('CompanyName')}} 
+            {{ $t('Inventory')}} 
           </v-list-item-title>
           
         </v-list-item-content>

@@ -1,5 +1,5 @@
 export default {
-    CompanyName: 'Next Challenge',
+    CompanyName: 'Eurl Next Challenge',
     Home: 'Accueil',
     Dashboard: 'Tableau de bord',
     Products: 'Produits',
@@ -72,25 +72,24 @@ export default {
     NameMustBeLessThan30Characters: 'Le nom doit comporter moins de 30 caractères',
     PasswordIsRequired: 'Mot de passe requis',
     PasswordMustBeMoreThan8Characters: 'Le mot de passe doit comporter plus de 8 caractères',
+    // About
+    Office: 'Bureau d\'étude et de conseil en informatique',
+    Services: 'Nos services',
+    Telephone: '036 63 93 82',
+    Mobile: '0552 56 96 54',
+    Contact: 'contact@nextchallenge-dz.com',
+    Site: 'https://nextchallenge-dz.com',
+    web: 'Développement d\'applications Web',
+    ecommerce: 'Développement d\'applications de commerce électronique',
+    erp: 'Développement ERP',
+    mobileDev: 'Développement d\'applications mobiles',
+    design: 'UI/UX Design',
+    support: 'Entretien et assistance',
+    slogan: 'nous fournissons des solutions pour votre entreprise!',
+    Inventory: 'Gestion de stock',
 
 
 
 
-    appname: 'Nom de l\'app',
-    welcome: 'Bienvenue !',
-    welcomeUser: 'Bienvenue {name} !',
-    login: 'Connexion',
-    logout: 'Déconnexion',
-    register: 'S\'inscrire',
-    darkMode: 'Thème sombre',
-    lightMode: 'Thème lumineux',
-    name: 'Nom',
-    password: 'Mot de passe',
-    confirmPassword: 'Confirmation du mot de passe',
-    noAccount: 'Pas de compte ?',
-    alreadyAnAccount: 'Vous avez déjà un compte ?',
-    isRequired: 'est nécessaire',
-    passwordLength: 'Le mot de passe doit comporter plus de {length} caractères',
-    passwordConfirm: 'Les mots de passe doivent être identiques'
   }
   

@@ -39,11 +39,12 @@
               <v-btn
                 outlined
                 rounded
-                text
+                
                 :to="item.to"
                 :disabled="item.title === 'Home'"
+                color="teal accent-4"
               >
-                Plus
+                Learn More
               </v-btn>
             </v-card-actions>
           </v-card>

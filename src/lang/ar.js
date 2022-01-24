@@ -1,5 +1,5 @@
 export default {
-    CompanyName: 'نكست شالنج',
+    CompanyName: 'م.ش.و.ذ.م.م نكست شالنج',
     Home: 'الصفحة الرئيسية',
     Dashboard: 'لوحات العدادات',
     Products: 'المنتجات',
@@ -72,22 +72,23 @@ export default {
     NameMustBeLessThan30Characters: 'يجب ألا يزيد عدد أحرف الاسم عن 30 حرفًا',
     PasswordIsRequired: 'كلمة المرور مطلوبة',
     PasswordMustBeMoreThan8Characters: 'كلمة المرور يجب أن تكون أكثر من 8 أحرف',
+    // About
+    Office: 'مكتب دراسات واستشارات تكنولوجيا المعلومات',
+    Services: 'خدماتنا',
+    Telephone: '036 63 93 82',
+    Mobile: '0552 56 96 54',
+    Contact: 'contact@nextchallenge-dz.com',
+    Site: 'https://nextchallenge-dz.com',
+    web: 'تطوير تطبيقات الويب',
+    ecommerce: 'تطوير تطبيقات التجارة الإلكترونية',
+    erp: 'تطوير تخطيط موارد المؤسسات',
+    mobileDev: 'تطوير تطبيقات الهواتف الذكية',
+    design: 'تصميم واجهة المستخدم',
+    support: 'الدعم و الصيانة',
+    slogan: 'نحن نقدم الحلول لمؤسستك!',
+    Inventory: 'ادارة المخزون',
 
 
-    appname: 'App Name',
-    welcome: 'Welcome !',
-    welcomeUser: 'Welcome {name} !',
-    login: 'Login',
-    logout: 'Logout',
-    register: 'Register',
-    darkMode: 'Dark Mode',
-    lightMode: 'Light mode',
-    name: 'Name',
-    password: 'Password',
-    confirmPassword: 'Confirm password',
-    noAccount: 'No account?',
-    alreadyAnAccount: 'You already have an account?',
-    isRequired: 'is required',
-    passwordLength: 'The password must be more than {length} characters long',
-    passwordConfirm: 'The passwords specified must be identical'
+
+   
   }
